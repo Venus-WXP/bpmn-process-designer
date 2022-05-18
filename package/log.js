@@ -2,7 +2,7 @@ function Log() {}
 
 Log.prototype.type = ["primary", "success", "warn", "error", "info"];
 
-Log.prototype.typeColor = function(type) {
+Log.prototype.typeColor = function (type) {
   let color = "";
   switch (type) {
     case "primary":
@@ -27,11 +27,11 @@ Log.prototype.typeColor = function(type) {
   return color;
 };
 
-Log.prototype.isArray = function(obj) {
+Log.prototype.isArray = function (obj) {
   return Object.prototype.toString.call(obj) === "[object Array]";
 };
 
-Log.prototype.print = function(text, type = "default", back = false) {
+Log.prototype.print = function (text, type = "default", back = false) {
   if (typeof text === "object") {
     // 如果是對象則調用打印對象方式
     this.isArray(text) ? console.table(text) : console.dir(text);
@@ -50,11 +50,11 @@ Log.prototype.print = function(text, type = "default", back = false) {
   }
 };
 
-Log.prototype.printBack = function(type = "primary", title) {
+Log.prototype.printBack = function (type = "primary", title) {
   this.print(type, title, true);
 };
 
-Log.prototype.pretty = function(type = "primary", title, text) {
+Log.prototype.pretty = function (type = "primary", title, text) {
   if (typeof text === "object") {
     console.group("Console Group", title);
     console.log(
@@ -76,23 +76,23 @@ Log.prototype.pretty = function(type = "primary", title, text) {
   );
 };
 
-Log.prototype.prettyPrimary = function(title, ...text) {
+Log.prototype.prettyPrimary = function (title, ...text) {
   text.forEach(t => this.pretty("primary", title, t));
 };
 
-Log.prototype.prettySuccess = function(title, ...text) {
+Log.prototype.prettySuccess = function (title, ...text) {
   text.forEach(t => this.pretty("success", title, t));
 };
 
-Log.prototype.prettyWarn = function(title, ...text) {
+Log.prototype.prettyWarn = function (title, ...text) {
   text.forEach(t => this.pretty("warn", title, t));
 };
 
-Log.prototype.prettyError = function(title, ...text) {
+Log.prototype.prettyError = function (title, ...text) {
   text.forEach(t => this.pretty("error", title, t));
 };
 
-Log.prototype.prettyInfo = function(title, ...text) {
+Log.prototype.prettyInfo = function (title, ...text) {
   text.forEach(t => this.pretty("info", title, t));
 };
 

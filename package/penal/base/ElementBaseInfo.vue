@@ -1,6 +1,6 @@
 <template>
   <div class="panel-tab__content">
-    <el-form size="mini" label-width="90px" @submit.native.prevent>
+    <el-form label-width="90px" @submit.native.prevent>
       <el-form-item label="ID">
         <el-input v-model="elementBaseInfo.id" :disabled="idEditDisabled" clearable @change="updateBaseInfo('id')" />
       </el-form-item>
@@ -41,7 +41,7 @@ export default {
   watch: {
     businessObject: {
       immediate: false,
-      handler: function(val) {
+      handler: function (val) {
         if (val) {
           this.$nextTick(() => this.resetBaseInfo());
         }

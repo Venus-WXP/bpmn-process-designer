@@ -26,7 +26,7 @@ export default {
   "Activate the hand tool": "激活抓手工具",
   "Activate the lasso tool": "激活套索工具",
   "Activate the create/remove space tool": "激活创建/删除空间工具",
-  "Create expanded SubProcess": "创建扩展子过程",
+  "Create expanded SubProcess": "创建扩展子流程",
   "Create IntermediateThrowEvent/BoundaryEvent": "创建中间抛出事件/边界事件",
   "Create Pool/Participant": "创建池/参与者",
   "Parallel Multi Instance": "并行多重事件",
@@ -103,9 +103,9 @@ export default {
   "Signal Boundary Event": "信号边界事件",
   "Signal Boundary Event (non-interrupting)": "信号边界事件（非中断）",
   "Compensation Boundary Event": "补偿边界事件",
-  "Exclusive Gateway": "互斥网关",
+  "Exclusive Gateway": "排它网关",
   "Parallel Gateway": "并行网关",
-  "Inclusive Gateway": "相容网关",
+  "Inclusive Gateway": "包容网关",
   "Complex Gateway": "复杂网关",
   "Event based Gateway": "事件网关",
   Transaction: "转运",
@@ -127,7 +127,7 @@ export default {
   "element {element} referenced by {referenced}#{property} not yet drawn": "由{referenced}#{property}引用的{element}元素仍未绘制",
   "already rendered {element}": "{element} 已被渲染",
   "failed to import {element}": "导入{element}失败",
-  //属性面板的参数
+  // 属性面板的参数
   Id: "编号",
   Name: "名称",
   General: "常规",
@@ -135,7 +135,7 @@ export default {
   "Message Name": "消息名称",
   Message: "消息",
   Initiator: "创建者",
-  "Asynchronous Continuations": "持续异步",
+  "Asynchronous Continuations": "异步执行",
   "Asynchronous Before": "异步前",
   "Asynchronous After": "异步后",
   "Job Configuration": "工作配置",
@@ -232,7 +232,7 @@ export default {
   "This maps to the process definition key.": "这映射到流程定义键。",
   "Candidate Starter Users": "候选人起动器的用户",
   "Specify more than one user as a comma separated list.": "指定多个用户作为逗号分隔的列表。",
-  "Tasklist Configuration": "Tasklist配置",
+  "Tasklist Configuration": "任务列表配置",
   Startable: "启动",
   "Specify more than one group as a comma separated list.": "指定多个组作为逗号分隔的列表。"
 };

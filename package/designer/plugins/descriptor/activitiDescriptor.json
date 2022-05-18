@@ -267,7 +267,7 @@
       ],
       "properties": [
         {
-          "name": "candidateStarterGroups",
+          "name": "candidateStarterConfiguration",
           "isAttr": true,
           "type": "String"
         },
@@ -293,9 +293,10 @@
           "default": true
         },
         {
-          "name":"executionListener",
-          "isAbstract": true,
-          "type":"Expression"
+          "name": "process-is-executable",
+          "isAttr": true,
+          "type": "Boolean",
+          "default": true
         }
       ]
     },
@@ -325,18 +326,6 @@
           "isAttr": true,
           "type": "String"
         }
-      ]
-    },
-    {
-      "name": "multiinstance_type",
-      "superClass":[
-        "Element"
-      ]
-    },
-    {
-      "name": "multiinstance_condition",
-      "superClass":[
-        "Element"
       ]
     },
     {
@@ -370,11 +359,6 @@
         },
         {
           "name": "priority",
-          "isAttr": true,
-          "type": "String"
-        },
-        {
-          "name": "multiinstance_condition",
           "isAttr": true,
           "type": "String"
         }
@@ -906,6 +890,16 @@
           "name": "fields",
           "type": "Field",
           "isMany": true
+        },
+        {
+          "name": "id",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "eventDefinitions",
+          "type": "bpmn:TimerEventDefinition",
+          "isMany": true
         }
       ]
     },
@@ -977,7 +971,29 @@
       ]
     },
     {
-      "name": "FormProperty",
+      "name": "FormData",
+      "superClass": [ "Element" ],
+      "meta": {
+        "allowedIn": [
+          "bpmn:StartEvent",
+          "bpmn:UserTask"
+        ]
+      },
+      "properties": [
+        {
+          "name": "fields",
+          "type": "FormField",
+          "isMany": true
+        },
+        {
+          "name": "businessKey",
+          "type": "String",
+          "isAttr": true
+        }
+      ]
+    },
+    {
+      "name": "FormField",
       "superClass": [ "Element" ],
       "properties": [
         {
@@ -1067,5 +1083,5 @@
       ]
     }
   ],
-  "emumerations": [ ]
+  "enumerations": []
 }

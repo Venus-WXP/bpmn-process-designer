@@ -1,10 +1,9 @@
 import MyProcessDesigner from "./designer";
-import MyProcessPalette from "./palette";
 import MyProcessPenal from "./penal";
 
-const components = [MyProcessDesigner, MyProcessPenal, MyProcessPalette];
+const components = [MyProcessDesigner, MyProcessPenal];
 
-const install = function(Vue) {
+const install = function (Vue) {
   components.forEach(component => {
     Vue.component(component.name, component);
   });

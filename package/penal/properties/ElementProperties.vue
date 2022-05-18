@@ -13,11 +13,11 @@
       </el-table-column>
     </el-table>
     <div class="element-drawer__button">
-      <el-button size="mini" type="primary" icon="el-icon-plus" @click="openAttributesForm(null, -1)">添加属性</el-button>
+      <el-button type="primary" icon="el-icon-plus" @click="openAttributesForm(null, -1)">添加属性</el-button>
     </div>
 
     <el-dialog :visible.sync="propertyFormModelVisible" title="属性配置" width="600px" append-to-body destroy-on-close>
-      <el-form :model="propertyForm" label-width="80px" size="mini" ref="attributeFormRef" @submit.native.prevent>
+      <el-form :model="propertyForm" label-width="80px" ref="attributeFormRef" @submit.native.prevent>
         <el-form-item label="属性名：" prop="name">
           <el-input v-model="propertyForm.name" clearable />
         </el-form-item>
@@ -26,8 +26,8 @@
         </el-form-item>
       </el-form>
       <template slot="footer">
-        <el-button size="mini" @click="propertyFormModelVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="saveAttribute">确 定</el-button>
+        <el-button @click="propertyFormModelVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveAttribute">确 定</el-button>
       </template>
     </el-dialog>
   </div>

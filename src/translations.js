@@ -5,11 +5,11 @@
  * translations and labels to translate.
  */
 export default {
-  "Exclusive Gateway": "Exklusives Gateway",
-  "Parallel Gateway": "Paralleles Gateway",
-  "Inclusive Gateway": "Inklusives Gateway",
-  "Complex Gateway": "Komplexes Gateway",
-  "Event based Gateway": "Ereignis-basiertes Gateway",
+  "Exclusive Gateway": "排它网关",
+  "Parallel Gateway": "并行网关",
+  "Inclusive Gateway": "包容网关",
+  "Complex Gateway": "复杂网关",
+  "Event based Gateway": "事件网关",
   "Message Start Event": "消息启动事件",
   "Timer Start Event": "定时启动事件",
   "Conditional Start Event": "条件启动事件",

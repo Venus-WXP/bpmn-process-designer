@@ -6,9 +6,8 @@
         <el-input
           type="textarea"
           v-model="documentation"
-          size="mini"
           resize="vertical"
-          :autosize="{ minRows: 2, maxRows: 4 }"
+          :autosize="{ minRows: 3, maxRows: 6 }"
           @input="updateDocumentation"
           @blur="updateDocumentation"
         />
@@ -31,7 +30,7 @@ export default {
   watch: {
     id: {
       immediate: true,
-      handler: function(id) {
+      handler: function (id) {
         if (id && id.length) {
           this.$nextTick(() => {
             const documentations = window.bpmnInstances.bpmnElement.businessObject?.documentation;

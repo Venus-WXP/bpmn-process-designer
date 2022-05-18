@@ -1,10 +1,4 @@
-export default (key, name, type) => {
-  if (!type) type = "camunda";
-  const TYPE_TARGET = {
-    activiti: "http://activiti.org/bpmn",
-    camunda: "http://bpmn.io/schema/bpmn",
-    flowable: "http://flowable.org/bpmn"
-  };
+export default (key, name) => {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn2:definitions 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -13,7 +7,7 @@ export default (key, name, type) => {
   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
   id="diagram_${key}"
-  targetNamespace="${TYPE_TARGET[type]}">
+  targetNamespace="http://activiti.org/bpmn">
   <bpmn2:process id="${key}" name="${name}" isExecutable="true">
   </bpmn2:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">

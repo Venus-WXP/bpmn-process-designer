@@ -1,6 +1,6 @@
 <template>
   <div class="my-process-designer">
-    <div class="my-process-designer__header">
+    <div class="my-process-designer__header" ref="header">
       <slot name="control-header"></slot>
       <template v-if="!$slots['control-header']">
         <el-button-group key="file-control">
@@ -22,11 +22,6 @@
               <el-button :size="headerButtonSize" type="text" @click="previewProcessJson">预览JSON</el-button>
             </div>
             <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-view">预览</el-button>
-          </el-tooltip>
-          <el-tooltip v-if="simulation" effect="light" :content="this.simulationStatus ? '退出模拟' : '开启模拟'">
-            <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-cpu" @click="processSimulation">
-              模拟
-            </el-button>
           </el-tooltip>
         </el-button-group>
         <el-button-group key="align-control">
@@ -79,7 +74,7 @@
     <div class="my-process-designer__container">
       <div class="my-process-designer__canvas" ref="bpmn-canvas"></div>
     </div>
-    <el-dialog title="预览" width="60%" :visible.sync="previewModelVisible" append-to-body destroy-on-close>
+    <el-dialog title="预览" width="70%" :visible.sync="previewModelVisible" append-to-body destroy-on-close>
       <highlightjs :language="previewType" :code="previewResult" />
     </el-dialog>
   </div>
@@ -87,22 +82,17 @@
 
 <script>
 import BpmnModeler from "bpmn-js/lib/Modeler";
+import colorPicker from "bpmn-js-color-picker";
 import DefaultEmptyXML from "./plugins/defaultEmpty";
 // 翻译方法
 import customTranslate from "./plugins/translate/customTranslate";
 import translationsCN from "./plugins/translate/zh";
-// 模拟流转流程
-import tokenSimulation from "bpmn-js-token-simulation";
 // 标签解析构建器
 // import bpmnPropertiesProvider from "bpmn-js-properties-panel/lib/provider/bpmn";
 // 标签解析 Moddle
-import camundaModdleDescriptor from "./plugins/descriptor/camundaDescriptor.json";
 import activitiModdleDescriptor from "./plugins/descriptor/activitiDescriptor.json";
-import flowableModdleDescriptor from "./plugins/descriptor/flowableDescriptor.json";
 // 标签解析 Extension
-import camundaModdleExtension from "./plugins/extension-moddle/camunda";
 import activitiModdleExtension from "./plugins/extension-moddle/activiti";
-import flowableModdleExtension from "./plugins/extension-moddle/flowable";
 // 引入json转换与高亮
 import X2JS from "x2js";
 
@@ -128,17 +118,9 @@ export default {
       type: Boolean,
       default: false
     },
-    simulation: {
-      type: Boolean,
-      default: true
-    },
     keyboard: {
       type: Boolean,
       default: true
-    },
-    prefix: {
-      type: String,
-      default: "camunda"
     },
     events: {
       type: Array,
@@ -146,7 +128,7 @@ export default {
     },
     headerButtonSize: {
       type: String,
-      default: "small",
+      default: "medium",
       validator: value => ["default", "medium", "small", "mini"].indexOf(value) !== -1
     },
     headerButtonType: {
@@ -159,7 +141,6 @@ export default {
     return {
       defaultZoom: 1,
       previewModelVisible: false,
-      simulationStatus: false,
       previewResult: "",
       previewType: "xml",
       recoverable: false,
@@ -190,24 +171,10 @@ export default {
       };
       Modules.push(TranslateModule);
 
-      // 模拟流转模块
-      if (this.simulation) {
-        Modules.push(tokenSimulation);
-      }
-
       // 根据需要的流程类型设置扩展元素构建模块
-      // if (this.prefix === "bpmn") {
-      //   Modules.push(bpmnModdleExtension);
-      // }
-      if (this.prefix === "camunda") {
-        Modules.push(camundaModdleExtension);
-      }
-      if (this.prefix === "flowable") {
-        Modules.push(flowableModdleExtension);
-      }
-      if (this.prefix === "activiti") {
-        Modules.push(activitiModdleExtension);
-      }
+      Modules.push(activitiModdleExtension);
+
+      Modules.push(colorPicker);
 
       return Modules;
     },
@@ -225,16 +192,8 @@ export default {
         }
       }
 
-      // 根据需要的 "流程类型" 设置 对应的解析文件
-      if (this.prefix === "activiti") {
-        Extensions.activiti = activitiModdleDescriptor;
-      }
-      if (this.prefix === "flowable") {
-        Extensions.flowable = flowableModdleDescriptor;
-      }
-      if (this.prefix === "camunda") {
-        Extensions.camunda = camundaModdleDescriptor;
-      }
+      // 设置流程解析文件
+      Extensions.activiti = activitiModdleDescriptor;
 
       return Extensions;
     }
@@ -266,7 +225,7 @@ export default {
       const that = this;
       // 注册需要的监听事件, 将. 替换为 - , 避免解析异常
       this.events.forEach(event => {
-        EventBus.on(event, function(eventObj) {
+        EventBus.on(event, function (eventObj) {
           let eventName = event.replace(/\./g, "-");
           let element = eventObj ? eventObj.element : null;
           that.$emit(eventName, element, eventObj);
@@ -297,7 +256,7 @@ export default {
       // 将字符串转换成图显示出来
       let newId = this.processId || `Process_${new Date().getTime()}`;
       let newName = this.processName || `业务流程_${new Date().getTime()}`;
-      let xmlString = xml || DefaultEmptyXML(newId, newName, this.prefix);
+      let xmlString = xml || DefaultEmptyXML(newId, newName);
       try {
         let { warnings } = await this.bpmnModeler.importXML(xmlString);
         if (warnings && warnings.length) {
@@ -365,7 +324,7 @@ export default {
       const file = this.$refs.refFile.files[0];
       const reader = new FileReader();
       reader.readAsText(file);
-      reader.onload = function() {
+      reader.onload = function () {
         let xmlStr = this.result;
         that.createNewDiagram(xmlStr);
       };
@@ -379,10 +338,6 @@ export default {
     },
     downloadProcessAsSvg() {
       this.downloadProcess("svg");
-    },
-    processSimulation() {
-      this.simulationStatus = !this.simulationStatus;
-      this.simulation && this.bpmnModeler.get("toggleMode").toggleMode();
     },
     processRedo() {
       this.bpmnModeler.get("commandStack").redo();
@@ -433,7 +388,7 @@ export default {
         this.$message.warning("请按住 Ctrl 键选择多个元素对齐");
         return;
       }
-      this.$confirm("自动对齐可能造成图形变形，是否继续？", "警告", {
+      this.$confirm("自动对齐可能造成图形变形，是否继续？", "提醒", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"

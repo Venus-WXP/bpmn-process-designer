@@ -5,12 +5,12 @@ export default function CustomPalette(palette, create, elementFactory, spaceTool
   PaletteProvider.call(this, palette, create, elementFactory, spaceTool, lassoTool, handTool, globalConnect, translate, 2000);
 }
 
-const F = function() {}; // 核心，利用空对象作为中介；
+const F = function () {}; // 核心，利用空对象作为中介；
 F.prototype = PaletteProvider.prototype; // 核心，将父类的原型赋值给空对象F；
 
 // 利用中介函数重写原型链方法
-F.prototype.getPaletteEntries = function() {
-  var actions = {},
+F.prototype.getPaletteEntries = function () {
+  const actions = {},
     create = this._create,
     elementFactory = this._elementFactory,
     spaceTool = this._spaceTool,
@@ -21,7 +21,7 @@ F.prototype.getPaletteEntries = function() {
 
   function createAction(type, group, className, title, options) {
     function createListener(event) {
-      var shape = elementFactory.createShape(assign({ type: type }, options));
+      const shape = elementFactory.createShape(assign({ type: type }, options));
 
       if (options) {
         shape.businessObject.di.isExpanded = options.isExpanded;
@@ -30,7 +30,7 @@ F.prototype.getPaletteEntries = function() {
       create.start(event, shape);
     }
 
-    var shortType = type.replace(/^bpmn:/, "");
+    const shortType = type.replace(/^bpmn:/, "");
 
     return {
       group: group,
@@ -44,14 +44,14 @@ F.prototype.getPaletteEntries = function() {
   }
 
   function createSubprocess(event) {
-    var subProcess = elementFactory.createShape({
+    const subProcess = elementFactory.createShape({
       type: "bpmn:SubProcess",
       x: 0,
       y: 0,
       isExpanded: true
     });
 
-    var startEvent = elementFactory.createShape({
+    const startEvent = elementFactory.createShape({
       type: "bpmn:StartEvent",
       x: 40,
       y: 82,
@@ -75,7 +75,7 @@ F.prototype.getPaletteEntries = function() {
       className: "bpmn-icon-hand-tool",
       title: translate("Activate the hand tool"),
       action: {
-        click: function(event) {
+        click: function (event) {
           handTool.activateHand(event);
         }
       }
@@ -85,7 +85,7 @@ F.prototype.getPaletteEntries = function() {
       className: "bpmn-icon-lasso-tool",
       title: translate("Activate the lasso tool"),
       action: {
-        click: function(event) {
+        click: function (event) {
           lassoTool.activateSelection(event);
         }
       }
@@ -95,7 +95,7 @@ F.prototype.getPaletteEntries = function() {
       className: "bpmn-icon-space-tool",
       title: translate("Activate the create/remove space tool"),
       action: {
-        click: function(event) {
+        click: function (event) {
           spaceTool.activateSelection(event);
         }
       }
@@ -105,7 +105,7 @@ F.prototype.getPaletteEntries = function() {
       className: "bpmn-icon-connection-multi",
       title: translate("Activate the global connect tool"),
       action: {
-        click: function(event) {
+        click: function (event) {
           globalConnect.toggle(event);
         }
       }

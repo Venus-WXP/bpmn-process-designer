@@ -2,18 +2,29 @@
   box-sizing: border-box;
   padding: 0 8px;
   border-left: 1px solid #eeeeee;
-  box-shadow: 0 0 8px #cccccc;
+  box-shadow: 2px 0 8px #cccccc;
   max-height: 100%;
   overflow-y: scroll;
 }
+.el-divider:not(.el-divider--horizontal) {
+  margin: 0 4px !important;
+}
+.el-collapse-item__header {
+  height: 50px;
+}
+.el-collapse-item__content {
+  font-size: 14px;
+}
 .panel-tab__title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   font-weight: 600;
   padding: 0 8px;
-  font-size: 1.1em;
-  line-height: 1.2em;
+  font-size: 1.3em;
   i {
     margin-right: 8px;
-    font-size: 1.2em;
+    font-size: 1.3em;
   }
 }
 .panel-tab__content {
@@ -23,7 +34,9 @@
   padding: 8px 16px;
   .panel-tab__content--title {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     padding-bottom: 8px;
     span {
       flex: 1;
