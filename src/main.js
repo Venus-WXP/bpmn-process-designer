@@ -4,18 +4,15 @@ import App from "./App.vue";
 import axios from "axios";
 Vue.prototype.$axios = axios;
 
-// 加载基础ElementUI
+// ElementUI
+import "@/bpmn-modeler/style/element-variables.scss";
 import ElementUI from "element-ui";
 Vue.use(ElementUI);
-import "../package/theme/element-variables.scss";
 
-import { vuePlugin } from "../package/highlight";
-import "highlight.js/styles/atom-one-dark-reasonable.css";
-Vue.use(vuePlugin);
-
-import MyPD from "../package/index.js";
-Vue.use(MyPD);
-import "../package/theme/index.scss";
+// 加载建模器
+import "@/bpmn-modeler/style/index.scss";
+import BpmnModeler from "@/bpmn-modeler/index.js";
+Vue.use(BpmnModeler);
 
 import "bpmn-js/dist/assets/diagram-js.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";

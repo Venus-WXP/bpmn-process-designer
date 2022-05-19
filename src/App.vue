@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <my-process-designer
+    <process-designer
       :key="`designer-${reloadIndex}`"
       :options="{
         taskResizingEnabled: true,
@@ -12,28 +12,21 @@
       ref="processDesigner"
       @init-finished="initModeler"
     />
-    <my-properties-panel :key="`penal-${reloadIndex}`" :bpmn-modeler="modeler" :prefix="controlForm.prefix" class="process-panel" />
+    <properties-panel :key="`penal-${reloadIndex}`" :bpmn-modeler="modeler" :prefix="controlForm.prefix" class="process-panel" />
   </div>
 </template>
 
 <script>
-import translations from "@/translations";
 // 自定义元素选中时的弹出菜单（修改 默认任务 为 用户任务）
-import CustomContentPadProvider from "../package/designer/plugins/content-pad";
+import CustomContentPadProvider from "./bpmn-modeler/designer/plugins/content-pad";
 // 自定义左侧菜单（修改 默认任务 为 用户任务）
-import CustomPaletteProvider from "../package/designer/plugins/palette";
-import Log from "../package/log";
+import CustomPaletteProvider from "./bpmn-modeler/designer/plugins/palette";
+import Log from "./bpmn-modeler/log";
 // 图形大小拖拽
 import TaskResizer from "bpmn-js-task-resize/lib";
 
-// clickoutside
-import clickoutside from "element-ui/lib/utils/clickoutside";
-
 export default {
   name: "App",
-  directives: {
-    clickoutside: clickoutside
-  },
   data() {
     return {
       xmlString: "",
@@ -42,7 +35,6 @@ export default {
       controlDrawerVisible: false,
       infoTipVisible: false,
       pageMode: false,
-      translationsSelf: translations,
       controlForm: {
         processId: "",
         processName: "",
@@ -66,20 +58,9 @@ export default {
         this.modeler = modeler;
         const canvas = modeler.get("canvas");
         const rootElement = canvas.getRootElement();
-        Log.prettyPrimary("Process Id:", rootElement.id);
-        Log.prettyPrimary("Process Name:", rootElement.businessObject.name);
+        Log.prettyPrimary("流程ID：", rootElement.id);
+        Log.prettyPrimary("流程名称：", rootElement.businessObject.name);
       }, 10);
-    },
-    reloadProcessDesigner(notDeep) {
-      this.controlForm.additionalModel = [];
-      for (let key in this.addis) {
-        if (this.addis[key]) {
-          this.controlForm.additionalModel.push(this.addis[key]);
-        }
-      }
-      !notDeep && (this.xmlString = undefined);
-      this.reloadIndex += 1;
-      this.modeler = null; // 避免 panel 异常
     }
   }
 };

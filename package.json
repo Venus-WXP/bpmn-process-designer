@@ -1,58 +1,55 @@
 {
   "name": "bpmn-process-designer",
-  "version": "0.0.1",
-  "description": "A process designer base on Vue 2.x and ElementUI",
+  "version": "1.0.0",
+  "description": "工作流流程设计器",
   "keywords": [
     "bpmn",
     "bpmn.js",
     "vue"
   ],
   "author": {
-    "name": "MiyueFE",
-    "email": "913784771@qq.com"
+    "name": "Venus",
+    "email": "iweixiaopeng@163.com"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:miyuesc/bpmn-process-designer.git"
+    "url": "git@github.com:Venus-WXP/bpmn-process-designer.git"
   },
   "scripts": {
-    "demo": "vue-cli-service serve",
+    "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --report"
   },
   "dependencies": {
+    "@highlightjs/vue-plugin": "^1.0.2",
     "axios": "^0.27.2",
-    "bpmn-js": "^9.0.4",
+    "bpmn-js": "^9.1.0",
     "bpmn-js-color-picker": "^0.4.0",
-    "bpmn-js-properties-panel": "^0.46.0",
     "bpmn-js-task-resize": "^1.2.0",
-    "camunda-bpmn-moddle": "^4.4.1",
-    "core-js": "^3.8.1",
+    "core-js": "^3.22.5",
     "diagram-js": "^8.3.0",
     "element-ui": "^2.15.8",
-    "highlight.js": "^10.5.0",
-    "min-dash": "^3.5.2",
-    "vue": "^2.6.11",
-    "vue-router": "^3.4.9",
-    "x2js": "^3.4.2",
-    "xml-js": "^1.6.11"
+    "highlight.js": "^11.5.1",
+    "min-dash": "^3.8.1",
+    "vue": "^2.6.14",
+    "vue-router": "^3.5.4"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@vue/cli-plugin-babel": "~4.5.17",
+    "@vue/cli-plugin-eslint": "~4.5.17",
+    "@vue/cli-service": "~4.5.17",
     "@vue/compiler-sfc": "^3.0.1",
-    "@vue/eslint-config-prettier": "^5.0.0",
+    "@vue/eslint-config-prettier": "^5.1.0",
     "babel-eslint": "^10.1.0",
-    "compression-webpack-plugin": "^6.1.1",
-    "eslint": "^6.7.2",
-    "eslint-plugin-prettier": "^3.1.0",
+    "compression-webpack-plugin": "^9.2.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-vue": "^6.2.2",
     "fs-extra": "^8.1.0",
-    "sass": "^1.30.0",
-    "sass-loader": "^8.0.2",
+    "sass": "^1.51.0",
+    "sass-loader": "^10.2.1",
     "script-ext-html-webpack-plugin": "^2.1.5",
     "terser-webpack-plugin": "^4.2.3",
-    "vue-template-compiler": "^2.6.11",
+    "vue-template-compiler": "^2.6.14",
     "webpack-bundle-analyzer": "^3.9.0"
   },
   "eslintConfig": {
