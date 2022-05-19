@@ -72,10 +72,6 @@ export default {
   },
   props: {
     bpmnModeler: Object,
-    prefix: {
-      type: String,
-      default: "camunda"
-    },
     width: {
       type: Number,
       default: 500
@@ -93,6 +89,7 @@ export default {
   },
   data() {
     return {
+      prefix: "activiti",
       activeTab: "base",
       elementId: "",
       elementType: "",

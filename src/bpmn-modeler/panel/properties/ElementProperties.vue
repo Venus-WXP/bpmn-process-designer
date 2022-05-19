@@ -1,11 +1,11 @@
 <template>
   <div class="panel-tab__content">
     <el-table :data="elementPropertyList" size="mini" max-height="240" border fit>
-      <el-table-column label="序号" width="50px" type="index" />
+      <el-table-column label="序号" width="50px" type="index" align="center" />
       <el-table-column label="属性名" prop="name" min-width="100px" show-overflow-tooltip />
       <el-table-column label="属性值" prop="value" min-width="100px" show-overflow-tooltip />
-      <el-table-column label="操作" width="90px">
-        <template slot-scope="{ row, $index }">
+      <el-table-column label="操作" width="90px" align="center">
+        <template #default="{ row, $index }">
           <el-button size="mini" type="text" @click="openAttributesForm(row, $index)">编辑</el-button>
           <el-divider direction="vertical" />
           <el-button size="mini" type="text" style="color: #ff4d4f" @click="removeAttributes(row, $index)">移除</el-button>
@@ -17,23 +17,25 @@
     </div>
 
     <el-dialog :visible.sync="propertyFormModelVisible" title="属性配置" width="600px" append-to-body destroy-on-close>
-      <el-form :model="propertyForm" label-width="80px" ref="attributeFormRef" @submit.native.prevent>
-        <el-form-item label="属性名：" prop="name">
+      <el-form :model="propertyForm" :validate-on-rule-change="false" status-icon :rules="validationRules" label-width="80px" ref="form" @submit.native.prevent>
+        <el-form-item label="属性名" prop="name">
           <el-input v-model="propertyForm.name" clearable />
         </el-form-item>
-        <el-form-item label="属性值：" prop="value">
+        <el-form-item label="属性值" prop="value">
           <el-input v-model="propertyForm.value" clearable />
         </el-form-item>
       </el-form>
       <template slot="footer">
-        <el-button @click="propertyFormModelVisible = false">取 消</el-button>
-        <el-button type="primary" @click="saveAttribute">确 定</el-button>
+        <el-button icon="el-icon-close" @click="propertyFormModelVisible = false">取 消</el-button>
+        <el-button type="success" icon="el-icon-finished" @click="saveAttribute">确 定</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { buildValidationRules } from "@/bpmn-modeler/utils";
+
 export default {
   name: "ElementProperties",
   props: {
@@ -51,6 +53,14 @@ export default {
       editingPropertyIndex: -1,
       propertyFormModelVisible: false
     };
+  },
+  computed: {
+    validationRules() {
+      return buildValidationRules([
+        { prop: "name", name: "属性名", trigger: "blur" },
+        { prop: "value", name: "属性值", trigger: "blur" }
+      ]);
+    }
   },
   watch: {
     id: {
@@ -79,14 +89,12 @@ export default {
     },
     openAttributesForm(attr, index) {
       this.editingPropertyIndex = index;
-      this.propertyForm = index === -1 ? {} : JSON.parse(JSON.stringify(attr));
+      this.propertyForm = index === -1 ? {} : { ...attr };
       this.propertyFormModelVisible = true;
-      this.$nextTick(() => {
-        if (this.$refs["attributeFormRef"]) this.$refs["attributeFormRef"].clearValidate();
-      });
     },
     removeAttributes(attr, index) {
       this.$confirm("确认移除该属性吗？", "提示", {
+        type: "warning",
         confirmButtonText: "确 认",
         cancelButtonText: "取 消"
       })
@@ -100,27 +108,31 @@ export default {
           this.updateElementExtensions(propertiesObject);
           this.resetAttributesList();
         })
-        .catch(() => console.info("操作取消"));
+        .catch(() => {});
     },
     saveAttribute() {
-      const { name, value } = this.propertyForm;
-      console.log(this.bpmnElementPropertyList);
-      if (this.editingPropertyIndex !== -1) {
-        window.bpmnInstances.modeling.updateModdleProperties(this.bpmnElement, this.bpmnElementPropertyList[this.editingPropertyIndex], {
-          name,
-          value
-        });
-      } else {
-        // 新建属性字段
-        const newPropertyObject = window.bpmnInstances.moddle.create(`${this.prefix}:Property`, { name, value });
-        // 新建一个属性字段的保存列表
-        const propertiesObject = window.bpmnInstances.moddle.create(`${this.prefix}:Properties`, {
-          values: this.bpmnElementPropertyList.concat([newPropertyObject])
-        });
-        this.updateElementExtensions(propertiesObject);
-      }
-      this.propertyFormModelVisible = false;
-      this.resetAttributesList();
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          const { name, value } = this.propertyForm;
+          if (this.editingPropertyIndex !== -1) {
+            window.bpmnInstances.modeling.updateModdleProperties(this.bpmnElement, this.bpmnElementPropertyList[this.editingPropertyIndex], {
+              name,
+              value
+            });
+          } else {
+            // 新建属性字段
+            const newPropertyObject = window.bpmnInstances.moddle.create(`${this.prefix}:Property`, { name, value });
+            // 新建一个属性字段的保存列表
+            const propertiesObject = window.bpmnInstances.moddle.create(`${this.prefix}:Properties`, {
+              values: this.bpmnElementPropertyList.concat([newPropertyObject])
+            });
+            this.updateElementExtensions(propertiesObject);
+          }
+          this.propertyFormModelVisible = false;
+          this.resetAttributesList();
+          this.$refs.form.resetFields();
+        }
+      });
     },
     updateElementExtensions(properties) {
       const extensions = window.bpmnInstances.moddle.create("bpmn:ExtensionElements", {

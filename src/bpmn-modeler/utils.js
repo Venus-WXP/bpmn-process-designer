@@ -69,3 +69,17 @@ export function uuid(length = 8, chars) {
   }
   return result;
 }
+
+/**
+ * 构建表单验证规则
+ *
+ * @param fields
+ * @returns {{}}
+ */
+export function buildValidationRules(fields) {
+  const rules = {};
+  fields.forEach(field => {
+    rules[field.prop] = [{ required: true, message: `请${field.trigger === "blur" ? "输入" : "选择"}${field.name}`, trigger: field.trigger }];
+  });
+  return rules;
+}

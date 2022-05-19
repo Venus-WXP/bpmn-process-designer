@@ -48,12 +48,12 @@ export const listenerType = {
 };
 
 export const eventType = {
-  create: "创建",
-  assignment: "指派",
-  complete: "完成",
-  delete: "删除",
-  update: "更新",
-  timeout: "超时"
+  create: "创建事件",
+  assignment: "指派事件",
+  complete: "完成事件",
+  delete: "删除事件",
+  update: "更新事件",
+  timeout: "超时事件"
 };
 
 export const fieldType = {

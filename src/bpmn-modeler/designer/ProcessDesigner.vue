@@ -4,38 +4,38 @@
       <slot name="control-header"></slot>
       <template v-if="!$slots['control-header']">
         <el-button-group key="file-control">
-          <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-download">保存流程定义</el-button>
-          <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-view" @click="previewProcessXML">预览XML</el-button>
+          <el-button type="primary" icon="el-icon-download">保存流程定义</el-button>
+          <el-button type="primary" icon="el-icon-view" @click="previewProcessXML">预览XML</el-button>
         </el-button-group>
         <el-button-group key="align-control">
           <el-tooltip effect="light" content="水平居中">
-            <el-button :size="headerButtonSize" class="align align-center" icon="el-icon-s-data" @click="elementsAlign('center')" />
+            <el-button class="align align-center" icon="el-icon-s-data" @click="elementsAlign('center')" />
           </el-tooltip>
           <el-tooltip effect="light" content="垂直居中">
-            <el-button :size="headerButtonSize" class="align align-middle" icon="el-icon-s-data" @click="elementsAlign('middle')" />
+            <el-button class="align align-middle" icon="el-icon-s-data" @click="elementsAlign('middle')" />
           </el-tooltip>
         </el-button-group>
         <el-button-group key="scale-control">
           <el-tooltip effect="light" content="缩小视图">
-            <el-button :size="headerButtonSize" :disabled="defaultZoom < 0.2" icon="el-icon-zoom-out" @click="processZoomOut()" />
+            <el-button :disabled="defaultZoom < 0.2" icon="el-icon-zoom-out" @click="processZoomOut()" />
           </el-tooltip>
-          <el-button :size="headerButtonSize">{{ Math.floor(this.defaultZoom * 10 * 10) + "%" }}</el-button>
+          <el-button>{{ Math.floor(this.defaultZoom * 10 * 10) + "%" }}</el-button>
           <el-tooltip effect="light" content="放大视图">
-            <el-button :size="headerButtonSize" :disabled="defaultZoom > 4" icon="el-icon-zoom-in" @click="processZoomIn()" />
+            <el-button :disabled="defaultZoom > 4" icon="el-icon-zoom-in" @click="processZoomIn()" />
           </el-tooltip>
           <el-tooltip effect="light" content="重置视图并居中">
-            <el-button :size="headerButtonSize" icon="el-icon-c-scale-to-original" @click="processReZoom()" />
+            <el-button icon="el-icon-c-scale-to-original" @click="processReZoom()" />
           </el-tooltip>
         </el-button-group>
         <el-button-group key="stack-control">
           <el-tooltip effect="light" content="撤销">
-            <el-button :size="headerButtonSize" :disabled="!revocable" icon="el-icon-refresh-left" @click="processUndo()" />
+            <el-button :disabled="!revocable" icon="el-icon-refresh-left" @click="processUndo()" />
           </el-tooltip>
           <el-tooltip effect="light" content="恢复">
-            <el-button :size="headerButtonSize" :disabled="!recoverable" icon="el-icon-refresh-right" @click="processRedo()" />
+            <el-button :disabled="!recoverable" icon="el-icon-refresh-right" @click="processRedo()" />
           </el-tooltip>
           <el-tooltip effect="light" content="重新绘制">
-            <el-button :size="headerButtonSize" icon="el-icon-refresh" @click="processRestart" />
+            <el-button icon="el-icon-refresh" @click="processRestart" />
           </el-tooltip>
         </el-button-group>
       </template>
@@ -56,7 +56,6 @@
 
 <script>
 import BpmnModeler from "bpmn-js/lib/Modeler";
-import colorPicker from "bpmn-js-color-picker";
 import defaultEmptyXML from "./plugins/empty-template";
 import hljs from "highlight.js/lib/core";
 import xml from "highlight.js/lib/languages/xml";
@@ -76,34 +75,15 @@ export default {
     value: String, // xml 字符串
     processId: String,
     processName: String,
-    translations: Object, // 自定义的翻译文件
     options: {
       type: Object,
       default: () => ({})
     }, // 自定义的翻译文件
     additionalModel: [Object, Array], // 自定义model
     moddleExtension: Object, // 自定义moddle
-    onlyCustomizeAddi: {
-      type: Boolean,
-      default: false
-    },
-    onlyCustomizeModdle: {
-      type: Boolean,
-      default: false
-    },
     events: {
       type: Array,
       default: () => ["element.click"]
-    },
-    headerButtonSize: {
-      type: String,
-      default: "medium",
-      validator: value => ["default", "medium", "small", "mini"].indexOf(value) !== -1
-    },
-    headerButtonType: {
-      type: String,
-      default: "primary",
-      validator: value => ["default", "primary", "success", "warning", "danger", "info"].indexOf(value) !== -1
     }
   },
   data() {
@@ -119,13 +99,6 @@ export default {
   computed: {
     additionalModules() {
       const Modules = [];
-      // 仅保留用户自定义扩展模块
-      if (this.onlyCustomizeAddi) {
-        if (Object.prototype.toString.call(this.additionalModel) === "[object Array]") {
-          return this.additionalModel || [];
-        }
-        return [this.additionalModel];
-      }
 
       // 插入用户自定义扩展模块
       if (Object.prototype.toString.call(this.additionalModel) === "[object Array]") {
@@ -136,23 +109,17 @@ export default {
 
       // 翻译模块
       const TranslateModule = {
-        translate: ["value", customTranslate(this.translations || translationsCN)]
+        translate: ["value", customTranslate(translationsCN)]
       };
       Modules.push(TranslateModule);
 
       // 根据需要的流程类型设置扩展元素构建模块
       Modules.push(activitiModdleExtension);
 
-      Modules.push(colorPicker);
-
       return Modules;
     },
     moddleExtensions() {
       const Extensions = {};
-      // 仅使用用户自定义模块
-      if (this.onlyCustomizeModdle) {
-        return this.moddleExtension || null;
-      }
 
       // 插入用户自定义模块
       if (this.moddleExtension) {
@@ -212,7 +179,7 @@ export default {
             this.$emit("input", xml);
             this.$emit("change", xml);
           } catch (e) {
-            console.error(`[Process Designer Warn]: ${e.message || e}`);
+            console.error(`获取流程定义XML内容出现错误：${e.message || e}`);
           }
         }, 500)
       );
@@ -285,7 +252,7 @@ export default {
       }
     },
     // 根据所需类型进行转码并返回下载地址
-    setEncoded(type, filename = "diagram", data) {
+    setEncoded(type, filename = "流程定义文件", data) {
       const encodedData = encodeURIComponent(data);
       return {
         filename: `${filename}.${type}`,
@@ -340,12 +307,12 @@ export default {
       const Selection = this.bpmnModeler.get("selection");
       const SelectedElements = Selection.get();
       if (!SelectedElements || SelectedElements.length <= 1) {
-        this.$message.warning("请按住 Ctrl 键选择多个元素对齐");
+        this.$message.warning("请按住 Ctrl 键选择多个元素后再进行对齐操作");
         return;
       }
-      this.$confirm("自动对齐可能造成图形变形，是否继续？", "提醒", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
+      this.$confirm("自动对齐可能造成图形变形，是否继续？", "提示", {
+        confirmButtonText: "确 定",
+        cancelButtonText: "取 消",
         type: "warning"
       }).then(() => Align.trigger(SelectedElements, align));
     },

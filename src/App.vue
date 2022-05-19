@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <process-designer
-      :key="`designer-${reloadIndex}`"
       :options="{
         taskResizingEnabled: true,
         eventResizingEnabled: true
@@ -12,11 +11,13 @@
       ref="processDesigner"
       @init-finished="initModeler"
     />
-    <properties-panel :key="`penal-${reloadIndex}`" :bpmn-modeler="modeler" :prefix="controlForm.prefix" class="process-panel" />
+    <properties-panel :bpmn-modeler="modeler" class="process-panel" />
   </div>
 </template>
 
 <script>
+// 颜色插件
+import ColorPicker from "bpmn-js-color-picker";
 // 自定义元素选中时的弹出菜单（修改 默认任务 为 用户任务）
 import CustomContentPadProvider from "./bpmn-modeler/designer/plugins/content-pad";
 // 自定义左侧菜单（修改 默认任务 为 用户任务）
@@ -31,23 +32,12 @@ export default {
     return {
       xmlString: "",
       modeler: null,
-      reloadIndex: 0,
-      controlDrawerVisible: false,
-      infoTipVisible: false,
       pageMode: false,
       controlForm: {
         processId: "",
         processName: "",
-        labelEditing: false,
-        labelVisible: false,
-        prefix: "activiti",
-        headerButtonSize: "medium",
         events: ["element.click", "element.contextmenu"],
-        additionalModel: [CustomContentPadProvider, CustomPaletteProvider, TaskResizer]
-      },
-      addis: {
-        CustomContentPadProvider,
-        CustomPaletteProvider
+        additionalModel: [CustomContentPadProvider, CustomPaletteProvider, TaskResizer, ColorPicker]
       }
     };
   },
