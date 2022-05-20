@@ -1,6 +1,6 @@
 <template>
   <div class="panel-tab__content">
-    <el-form label-width="90px" @submit.native.prevent>
+    <el-form label-width="80px" @submit.native.prevent>
       <el-form-item :label="elementBaseInfo.$type === 'bpmn:Process' ? '流程ID' : 'ID'">
         <el-input v-model="elementBaseInfo.id" :disabled="idEditDisabled" clearable @change="updateBaseInfo('id')" />
       </el-form-item>

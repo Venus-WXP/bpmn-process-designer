@@ -4,7 +4,7 @@
       <slot name="control-header"></slot>
       <template v-if="!$slots['control-header']">
         <el-button-group key="file-control">
-          <el-button type="primary" icon="el-icon-download">保存流程定义</el-button>
+          <el-button type="primary" icon="el-icon-document-checked">保存流程定义</el-button>
           <el-button type="primary" icon="el-icon-view" @click="previewProcessXML">预览XML</el-button>
         </el-button-group>
         <el-button-group key="align-control">

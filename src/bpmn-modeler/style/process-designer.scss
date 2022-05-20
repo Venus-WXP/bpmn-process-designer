@@ -1,5 +1,8 @@
 @import "~bpmn-js-color-picker/colors/color-picker.css";
 @import "~highlight.js/styles/idea.css";
+body {
+  overflow: hidden;
+}
 .djs-popup-body {
   .entry {
     padding: 0 4px 4px !important;

@@ -6,6 +6,14 @@
   max-height: 100%;
   overflow-y: scroll;
 }
+.el-drawer__body {
+  .el-form {
+    .el-form-item:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
 .el-collapse-item__header {
   color: #555555;
 }
