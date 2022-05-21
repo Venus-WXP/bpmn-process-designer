@@ -17,24 +17,33 @@
         </el-form-item>
         <el-form-item label="集合" key="collection">
           <el-input v-model="loopInstanceForm.collection" clearable @change="updateLoopBase" />
+          <el-alert :closable="false" type="info" show-icon title="使用提示" style="margin-top: 12px">
+            <div>
+              循环基数为创建实例的数量，集合为办理人集合，一般循环基数可不填，由集合的数量自动决定，从而做到动态实例数量。
+              注：集合既支持表达式，也支持流程实例变量名称。
+            </div>
+          </el-alert>
         </el-form-item>
         <el-form-item label="元素变量" key="elementVariable">
           <el-input v-model="loopInstanceForm.elementVariable" clearable @change="updateLoopBase" />
         </el-form-item>
         <el-form-item label="完成条件" key="completionCondition">
           <el-input v-model="loopInstanceForm.completionCondition" clearable @change="updateLoopCondition" />
+          <el-alert :closable="false" type="info" show-icon title="内置变量提示" style="margin-top: 12px">
+            <div>
+              对于多实例的活动，系统会内置几个变量，分别是：
+              <p>1、<b style="color: #ff9900">nrOfInstances</b> 总实例数量，即此活动总共产生了多少个实例</p>
+              <p>2、<b style="color: #ff9900">nrOfActiveInstances</b> 当前激活实例数量，即当前总共有多少个活动的（没有完成的）实例</p>
+              <p>3、<b style="color: #ff9900">nrOfCompletedInstances</b> 当前已完成实例数量，即当前总共已完成了多少个实例</p>
+              <p>4、<b style="color: #ff9900">loopCounter</b> 循环计数，此变量属于活动实例本地变量，每一个实例均持有不同的值</p>
+            </div>
+          </el-alert>
         </el-form-item>
         <el-form-item label="异步状态" key="async">
-          <el-checkbox v-model="loopInstanceForm.asyncBefore" label="异步前" @change="updateLoopAsync('asyncBefore')" />
-          <el-checkbox v-model="loopInstanceForm.asyncAfter" label="异步后" @change="updateLoopAsync('asyncAfter')" />
-          <el-checkbox
-            v-model="loopInstanceForm.exclusive"
-            v-if="loopInstanceForm.asyncAfter || loopInstanceForm.asyncBefore"
-            label="排除"
-            @change="updateLoopAsync('exclusive')"
-          />
+          <el-checkbox v-model="loopInstanceForm.async" label="启用异步" @change="updateLoopAsync('async')" />
+          <el-checkbox v-model="loopInstanceForm.exclusive" v-if="loopInstanceForm.async" label="排它执行" @change="updateLoopAsync('exclusive')" />
         </el-form-item>
-        <el-form-item label="重试周期" prop="timeCycle" v-if="loopInstanceForm.asyncAfter || loopInstanceForm.asyncBefore" key="timeCycle">
+        <el-form-item label="重试周期" prop="timeCycle" v-if="loopInstanceForm.async" key="timeCycle">
           <el-input v-model="loopInstanceForm.timeCycle" clearable @change="updateLoopTimeCycle" />
         </el-form-item>
       </template>
@@ -55,13 +64,12 @@ export default {
   data() {
     return {
       loopCharacteristics: "",
-      //默认配置，用来覆盖原始不存在的选项，避免报错
+      // 默认配置，用来覆盖原始不存在的选项，避免报错
       defaultLoopInstanceForm: {
         completionCondition: "",
         loopCardinality: "",
         extensionElements: [],
-        asyncAfter: false,
-        asyncBefore: false,
+        async: false,
         exclusive: false
       },
       loopInstanceForm: {}
@@ -181,12 +189,16 @@ export default {
     },
     // 各异步状态
     updateLoopAsync(key) {
-      const { asyncBefore, asyncAfter } = this.loopInstanceForm;
-      let asyncAttr = Object.create(null);
-      if (!asyncBefore && !asyncAfter) {
+      const asyncAttr = Object.create(null);
+      if (!this.loopInstanceForm.async) {
         this.$set(this.loopInstanceForm, "exclusive", false);
-        asyncAttr = { asyncBefore: false, asyncAfter: false, exclusive: false, extensionElements: null };
+        asyncAttr["async"] = false;
+        asyncAttr["exclusive"] = false;
+        asyncAttr["extensionElements"] = null;
       } else {
+        if (key === "async") {
+          asyncAttr["exclusive"] = true;
+        }
         asyncAttr[key] = this.loopInstanceForm[key];
       }
       window.bpmnInstances.modeling.updateModdleProperties(this.bpmnElement, this.multiLoopInstance, asyncAttr);

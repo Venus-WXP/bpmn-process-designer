@@ -8,23 +8,26 @@
         <el-button type="primary" icon="el-icon-plus" style="margin-left: 8px" @click="openMessageModel" />
       </div>
     </el-form-item>
-    <el-dialog :visible.sync="messageModelVisible" :close-on-click-modal="false" title="创建新消息" width="400px" append-to-body destroy-on-close>
-      <el-form :model="newMessageForm" label-width="90px" @submit.native.prevent>
-        <el-form-item label="消息ID">
+    <el-dialog :visible.sync="messageModelVisible" :close-on-click-modal="false" title="创建新消息" width="600px" append-to-body destroy-on-close>
+      <el-form ref="messageForm" :model="newMessageForm" :rules="validationRules" label-width="90px" @submit.native.prevent>
+        <el-form-item label="消息ID" prop="id">
           <el-input v-model="newMessageForm.id" clearable />
         </el-form-item>
-        <el-form-item label="消息名称">
+        <el-form-item label="消息名称" prop="name">
           <el-input v-model="newMessageForm.name" clearable />
         </el-form-item>
       </el-form>
       <template slot="footer">
-        <el-button type="primary" @click="createNewMessage">确 认</el-button>
+        <el-button icon="el-icon-close" @click="messageModelVisible = false">取 消</el-button>
+        <el-button type="success" icon="el-icon-finished" @click="createNewMessage">确 认</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { buildValidationRules } from "@/bpmn-modeler/utils";
+
 export default {
   name: "ReceiveTask",
   props: {
@@ -38,6 +41,14 @@ export default {
       messageMap: {},
       messageModelVisible: false
     };
+  },
+  computed: {
+    validationRules() {
+      return buildValidationRules([
+        { prop: "id", name: "请输入消息ID", trigger: "blur" },
+        { prop: "name", name: "请输入消息名称", trigger: "blur" }
+      ]);
+    }
   },
   watch: {
     id: {
@@ -61,6 +72,7 @@ export default {
   methods: {
     getBindMessage() {
       this.bpmnElement = window.bpmnInstances.bpmnElement;
+      console.log(this.bpmnElement)
       this.bindMessageId = this.bpmnElement.businessObject?.messageRef?.id || "-1";
     },
     openMessageModel() {
@@ -68,15 +80,19 @@ export default {
       this.newMessageForm = {};
     },
     createNewMessage() {
-      if (this.messageMap[this.newMessageForm.id]) {
-        this.$message.error("该消息已存在，请修改id后重新保存");
-        return;
-      }
-      const newMessage = window.bpmnInstances.moddle.create("bpmn:Message", this.newMessageForm);
-      this.bpmnRootElements.push(newMessage);
-      this.$set(this.messageMap, this.newMessageForm.id, this.newMessageForm.name);
-      this.bpmnMessageRefsMap[this.newMessageForm.id] = newMessage;
-      this.messageModelVisible = false;
+      this.$refs.messageForm.validate(valid => {
+        if (valid) {
+          if (this.messageMap[this.newMessageForm.id]) {
+            this.$message.error("该消息已存在，请修改ID后重新保存");
+            return;
+          }
+          const newMessage = window.bpmnInstances.moddle.create("bpmn:Message", this.newMessageForm);
+          this.bpmnRootElements.push(newMessage);
+          this.$set(this.messageMap, this.newMessageForm.id, this.newMessageForm.name);
+          this.bpmnMessageRefsMap[this.newMessageForm.id] = newMessage;
+          this.messageModelVisible = false;
+        }
+      });
     },
     updateTaskMessage(messageId) {
       if (messageId === "-1") {

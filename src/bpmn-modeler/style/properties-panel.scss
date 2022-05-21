@@ -13,7 +13,16 @@
     }
   }
 }
+.el-alert__title {
+  font-size: 14px;
+}
+.el-alert__content {
+  line-height: 1.5;
 
+  p {
+    margin: 6px 0;
+  }
+}
 .el-collapse-item__header {
   color: #555555;
 }
