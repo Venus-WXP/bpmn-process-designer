@@ -5,13 +5,13 @@ import axios from "axios";
 Vue.prototype.$axios = axios;
 
 // ElementUI
-import "@/bpmn-modeler/style/element-variables.scss";
+import "@/designer/bpmn-modeler/style/element-variables.scss";
 import ElementUI from "element-ui";
 Vue.use(ElementUI);
 
 // 加载建模器
-import "@/bpmn-modeler/style/index.scss";
-import BpmnModeler from "@/bpmn-modeler/index.js";
+import "@/designer/bpmn-modeler/style/index.scss";
+import BpmnModeler from "@/designer/bpmn-modeler";
 Vue.use(BpmnModeler);
 
 import "bpmn-js/dist/assets/diagram-js.css";

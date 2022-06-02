@@ -2,10 +2,10 @@
   <div class="panel-tab__content">
     <el-form label-width="80px" @submit.native.prevent>
       <el-form-item :label="elementBaseInfo.$type === 'bpmn:Process' ? '流程ID' : 'ID'">
-        <el-input v-model="elementBaseInfo.id" :disabled="idEditDisabled" clearable @change="updateBaseInfo('id')" />
+        <el-input v-model="elementBaseInfo.id" :disabled="processKeyAndNameDisabled" clearable @change="updateBaseInfo('id')" />
       </el-form-item>
       <el-form-item :label="elementBaseInfo.$type === 'bpmn:Process' ? '流程名称' : '名称'">
-        <el-input v-model="elementBaseInfo.name" clearable @change="updateBaseInfo('name')" />
+        <el-input v-model="elementBaseInfo.name" :disabled="processKeyAndNameDisabled" clearable @change="updateBaseInfo('name')" />
       </el-form-item>
       <!--流程的基础属性-->
       <template v-if="elementBaseInfo.$type === 'bpmn:Process'">
@@ -13,7 +13,7 @@
           <el-input v-model="elementBaseInfo.versionTag" clearable @change="updateBaseInfo('versionTag')" />
         </el-form-item>
         <el-form-item label="可执行">
-          <el-switch v-model="elementBaseInfo.isExecutable" active-text="是" inactive-text="否" @change="updateBaseInfo('isExecutable')" />
+          <el-switch v-model="elementBaseInfo.isExecutable" disabled active-text="是" inactive-text="否" @change="updateBaseInfo('isExecutable')" />
         </el-form-item>
       </template>
       <el-form-item v-if="elementBaseInfo.$type === 'bpmn:SubProcess'" label="状态">
@@ -28,7 +28,7 @@ export default {
   props: {
     businessObject: Object,
     type: String,
-    idEditDisabled: {
+    processKeyAndNameDisabled: {
       type: Boolean,
       default: true
     }
@@ -51,7 +51,7 @@ export default {
   methods: {
     resetBaseInfo() {
       this.bpmnElement = window?.bpmnInstances?.bpmnElement || {};
-      this.elementBaseInfo = JSON.parse(JSON.stringify(this.bpmnElement.businessObject));
+      this.elementBaseInfo = { ...this.bpmnElement.businessObject };
       if (this.elementBaseInfo && this.elementBaseInfo.$type === "bpmn:SubProcess") {
         this.$set(this.elementBaseInfo, "isExpanded", this.elementBaseInfo.di?.isExpanded);
       }

@@ -54,7 +54,7 @@
   </div>
 </template>
 <script>
-import { buildValidationRules } from "@/bpmn-modeler/utils";
+import { buildValidationRules } from "@/designer/bpmn-modeler/utils";
 
 export default {
   name: "SignalAndMassage",

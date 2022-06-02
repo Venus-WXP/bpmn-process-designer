@@ -4,7 +4,7 @@
       <slot name="control-header"></slot>
       <template v-if="!$slots['control-header']">
         <el-button-group key="file-control">
-          <el-button type="primary" icon="el-icon-document-checked">保存流程定义</el-button>
+          <el-button type="primary" icon="el-icon-document-checked" @click="saveProcessXML">保存流程定义</el-button>
           <el-button type="primary" icon="el-icon-view" @click="previewProcessXML">预览XML</el-button>
         </el-button-group>
         <el-button-group key="align-control">
@@ -317,6 +317,26 @@ export default {
       }).then(() => Align.trigger(SelectedElements, align));
     },
     /*-----------------------------    方法结束     ---------------------------------*/
+    saveProcessXML() {
+      this.$confirm("确定要保存流程定义吗？", "提示", {
+        confirmButtonText: "确 定",
+        cancelButtonText: "取 消",
+        type: "success"
+      }).then(() => {
+        this.bpmnModeler.saveXML({ format: true }).then(({ xml }) => {
+          window.parent.postMessage(
+            {
+              type: "consume",
+              consumeType: "save",
+              data: {
+                processDefinitionXml: xml
+              }
+            },
+            "*"
+          );
+        });
+      });
+    },
     previewProcessXML() {
       this.bpmnModeler.saveXML({ format: true }).then(({ xml }) => {
         this.previewResult = hljs.highlight(xml, {

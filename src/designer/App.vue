@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" v-loading="initLoading">
     <process-designer
       :options="{
         taskResizingEnabled: true,
@@ -11,7 +11,7 @@
       ref="processDesigner"
       @init-finished="initModeler"
     />
-    <properties-panel :bpmn-modeler="modeler" class="process-panel" />
+    <properties-panel :bpmn-modeler="modeler" :process-key-and-name-disabled="processKeyAndNameDisabled" class="process-panel" />
   </div>
 </template>
 
@@ -32,17 +32,57 @@ export default {
     return {
       xmlString: "",
       modeler: null,
-      pageMode: false,
       controlForm: {
         processId: "",
         processName: "",
         events: ["element.click", "element.contextmenu"],
         additionalModel: [CustomContentPadProvider, CustomPaletteProvider, TaskResizer, ColorPicker]
-      }
+      },
+      initLoading: false,
+      processKeyAndNameDisabled: false
     };
   },
-  created() {},
+  created() {
+    window.addEventListener("message", this.onMessage);
+    // setTimeout(() => {
+    //   this.initLoading = true;
+    //   window.parent.postMessage(
+    //     {
+    //       type: "produce",
+    //       produceType: "orgData"
+    //     },
+    //     "*"
+    //   );
+    // }, 3000);
+  },
+  beforeDestroy() {
+    window.removeEventListener("message", this.onMessage);
+  },
   methods: {
+    onMessage({ data }) {
+      if (!(typeof data === "object")) {
+        return;
+      }
+      if (data.type === "init") {
+        Log.prettyPrimary("收到初始化事件：", JSON.stringify(data.data));
+        if (data.data.processKeyAndNameDisabled) {
+          this.processKeyAndNameDisabled = true;
+        }
+        const xml = data.data.processDefinitionXml;
+        if (xml) {
+          this.$refs.processDesigner.createNewDiagram(xml);
+        } else {
+          const processId = data.data.processId;
+          const processName = data.data.processName;
+
+          if (processId && processName) {
+            this.controlForm.processId = processId;
+            this.controlForm.processName = processName;
+            this.$nextTick(() => this.$refs.processDesigner.createNewDiagram());
+          }
+        }
+      }
+    },
     initModeler(modeler) {
       setTimeout(() => {
         this.modeler = modeler;

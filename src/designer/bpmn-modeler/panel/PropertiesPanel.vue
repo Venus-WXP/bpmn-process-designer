@@ -3,7 +3,7 @@
     <el-collapse v-model="activeTab">
       <el-collapse-item name="base">
         <div slot="title" class="panel-tab__title"><i class="el-icon-info"></i>常规</div>
-        <element-base-info :id-edit-disabled="idEditDisabled" :business-object="elementBusinessObject" :type="elementType" />
+        <element-base-info :process-key-and-name-disabled="processKeyAndNameDisabled" :business-object="elementBusinessObject" :type="elementType" />
       </el-collapse-item>
       <el-collapse-item name="condition" v-if="elementType === 'Process'" key="message">
         <div slot="title" class="panel-tab__title"><i class="el-icon-s-comment"></i>消息与信号</div>
@@ -76,7 +76,7 @@ export default {
       type: Number,
       default: 500
     },
-    idEditDisabled: {
+    processKeyAndNameDisabled: {
       type: Boolean,
       default: false
     }

@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { buildValidationRules } from "@/bpmn-modeler/utils";
+import { buildValidationRules } from "@/designer/bpmn-modeler/utils";
 
 export default {
   name: "ReceiveTask",
@@ -72,7 +72,6 @@ export default {
   methods: {
     getBindMessage() {
       this.bpmnElement = window.bpmnInstances.bpmnElement;
-      console.log(this.bpmnElement)
       this.bindMessageId = this.bpmnElement.businessObject?.messageRef?.id || "-1";
     },
     openMessageModel() {

@@ -10,6 +10,14 @@ function resolve(dir) {
 
 module.exports = {
   publicPath: "/", // 打包相对路径
+  pages: {
+    designer: {
+      entry: "src/designer/main.js",
+      filename: "bpmn-process-designer.html",
+      template: "public/index.html",
+      title: "流程设计器"
+    }
+  },
   productionSourceMap: false,
   devServer: {
     port: 8100
