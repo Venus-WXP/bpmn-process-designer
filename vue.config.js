@@ -16,6 +16,12 @@ module.exports = {
       filename: "bpmn-process-designer.html",
       template: "public/index.html",
       title: "流程设计器"
+    },
+    viewer: {
+      entry: "src/viewer/main.js",
+      filename: "bpmn-process-viewer.html",
+      template: "public/index.html",
+      title: "流程查看器"
     }
   },
   productionSourceMap: false,

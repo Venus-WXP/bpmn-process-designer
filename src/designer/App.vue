@@ -55,6 +55,14 @@ export default {
     //   );
     // }, 3000);
   },
+  mounted() {
+    window.parent.postMessage(
+      {
+        type: "initialized"
+      },
+      "*"
+    );
+  },
   beforeDestroy() {
     window.removeEventListener("message", this.onMessage);
   },
