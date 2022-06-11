@@ -18,6 +18,8 @@ import "bpmn-js/dist/assets/diagram-js.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css";
 
+Vue.prototype.$bus = new Vue();
+
 new Vue({
   render: h => h(App)
 }).$mount("#app");

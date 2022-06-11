@@ -2,7 +2,9 @@
   <div class="panel-tab__content">
     <el-form label-width="80px" @submit.native.prevent>
       <el-form-item label="表单标识">
-        <el-input v-model="formKey" clearable @change="updateElementFormKey" />
+        <el-select v-model="formKey" clearable @change="updateElementFormKey">
+          <el-option v-for="item in formKeyList" :key="item.formKey" :value="item.formKey" :label="item.formTitle" />
+        </el-select>
       </el-form-item>
       <el-form-item label="业务标识">
         <el-select v-model="businessKey" @change="updateElementBusinessKey">
@@ -163,6 +165,8 @@ export default {
   data() {
     return {
       formKey: "",
+      formKeyLoaded: false,
+      formKeyList: [],
       businessKey: "",
       optionModelTitle: "",
       fieldList: [],
@@ -210,6 +214,15 @@ export default {
       handler(val) {
         val && val.length && this.$nextTick(() => this.resetFormList());
       }
+    }
+  },
+  created() {
+    if (!this.formKeyLoaded) {
+      this.$bus.$once("formKeyData", data => {
+        this.formKeyList = data;
+        this.formKeyLoaded = true;
+      });
+      this.$bus.$emit("produce", "formKeyData");
     }
   },
   methods: {

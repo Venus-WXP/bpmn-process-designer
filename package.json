@@ -22,7 +22,7 @@
   "dependencies": {
     "@highlightjs/vue-plugin": "^1.0.2",
     "axios": "^0.27.2",
-    "bpmn-js": "^9.1.0",
+    "bpmn-js": "^9.2.2",
     "bpmn-js-color-picker": "^0.4.0",
     "bpmn-js-task-resize": "^1.2.0",
     "core-js": "^3.22.5",
@@ -40,7 +40,7 @@
     "@vue/compiler-sfc": "^3.0.1",
     "@vue/eslint-config-prettier": "^5.1.0",
     "babel-eslint": "^10.1.0",
-    "compression-webpack-plugin": "^9.2.0",
+    "compression-webpack-plugin": "^6.1.1",
     "eslint": "^6.8.0",
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-vue": "^6.2.2",

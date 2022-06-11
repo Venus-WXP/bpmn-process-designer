@@ -9,19 +9,21 @@ function resolve(dir) {
 }
 
 module.exports = {
-  publicPath: "/", // 打包相对路径
+  publicPath: IS_PROD ? "/bpmn" : "/", // 打包相对路径
   pages: {
     designer: {
       entry: "src/designer/main.js",
       filename: "bpmn-process-designer.html",
       template: "public/index.html",
-      title: "流程设计器"
+      title: "流程设计器",
+      chunks: ["chunk-libs", "chunk-element-ui", "designer", "runtime"]
     },
     viewer: {
       entry: "src/viewer/main.js",
       filename: "bpmn-process-viewer.html",
       template: "public/index.html",
-      title: "流程查看器"
+      title: "流程查看器",
+      chunks: ["chunk-libs", "chunk-element-ui", "viewer", "runtime"]
     }
   },
   productionSourceMap: false,
@@ -43,18 +45,18 @@ module.exports = {
             priority: 10,
             chunks: "initial" // only bpmn-modeler third parties that are initially dependent
           },
-          // elementUI: {
-          //   name: "chunk-element-ui", // split elementUI into a single bpmn-modeler
-          //   priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
-          //   test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
-          // },
-          commons: {
-            name: "chunk-components",
-            test: resolve("package"), // can customize your rules
-            minChunks: 1, //  minimum common number
-            priority: 5,
-            reuseExistingChunk: true
+          elementUI: {
+            name: "chunk-element-ui", // split elementUI into a single bpmn-modeler
+            priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+            test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
           }
+          // commons: {
+          //   name: "chunk-components",
+          //   test: resolve("package"), // can customize your rules
+          //   minChunks: 1, //  minimum common number
+          //   priority: 5,
+          //   reuseExistingChunk: true
+          // }
         }
       });
       config.optimization.runtimeChunk("single");

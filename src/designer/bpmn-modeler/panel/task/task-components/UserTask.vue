@@ -1,22 +1,30 @@
 <template>
   <div style="margin-top: 16px">
     <el-form-item label="处理用户">
-      <el-select v-model="userTaskForm.assignee" @change="updateElementTask('assignee')">
-        <el-option v-for="ak in mockData" :key="'ass-' + ak" :label="`用户${ak}`" :value="`user${ak}`" />
+      <el-select v-model="userTaskForm.assignee" filterable clearable @change="updateElementTask('assignee')">
+        <el-option v-for="user in users" :key="user.id" :label="user.name" :value="user.id" />
       </el-select>
     </el-form-item>
     <el-form-item label="候选用户">
-      <el-select v-model="userTaskForm.candidateUsers" multiple collapse-tags @change="updateElementTask('candidateUsers')">
-        <el-option v-for="uk in mockData" :key="'user-' + uk" :label="`用户${uk}`" :value="`user${uk}`" />
+      <el-select v-model="userTaskForm.candidateUsers" filterable clearable multiple collapse-tags @change="updateElementTask('candidateUsers')">
+        <el-option v-for="user in users" :key="user.id" :label="user.name" :value="user.id" />
       </el-select>
     </el-form-item>
     <el-form-item label="候选分组">
-      <el-select v-model="userTaskForm.candidateGroups" multiple collapse-tags @change="updateElementTask('candidateGroups')">
-        <el-option v-for="gk in mockData" :key="'ass-' + gk" :label="`分组${gk}`" :value="`group${gk}`" />
+      <el-select v-model="userTaskForm.candidateGroups" filterable clearable multiple collapse-tags @change="updateElementTask('candidateGroups')">
+        <el-option v-for="group in groups" :key="group.id" :label="group.name" :value="group.id" />
       </el-select>
     </el-form-item>
     <el-form-item label="到期时间">
-      <el-input v-model="userTaskForm.dueDate" clearable @change="updateElementTask('dueDate')" />
+      <el-date-picker
+        style="width: 100%"
+        v-model="userTaskForm.dueDate"
+        type="datetime"
+        value-format="yyyy-MM-dd HH:mm:ss"
+        clearable
+        :editable="false"
+        @change="updateElementTask('dueDate')"
+      />
     </el-form-item>
     <el-form-item label="跟踪时间">
       <el-input v-model="userTaskForm.followUpDate" clearable @change="updateElementTask('followUpDate')" />
@@ -45,7 +53,9 @@ export default {
         priority: ""
       },
       userTaskForm: {},
-      mockData: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      users: [],
+      groups: [],
+      principalsLoaded: false
     };
   },
   watch: {
@@ -55,6 +65,16 @@ export default {
         this.bpmnElement = window.bpmnInstances.bpmnElement;
         this.$nextTick(() => this.resetTaskForm());
       }
+    }
+  },
+  created() {
+    if (!this.principalsLoaded) {
+      this.$bus.$once("principalsData", data => {
+        this.users = data.users;
+        this.groups = data.groups;
+        this.principalsLoaded = true;
+      });
+      this.$bus.$emit("produce", "principalsData");
     }
   },
   methods: {

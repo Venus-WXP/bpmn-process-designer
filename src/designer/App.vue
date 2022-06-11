@@ -43,17 +43,16 @@ export default {
     };
   },
   created() {
+    this.$bus.$on("produce", eventType => {
+      window.parent.postMessage(
+        {
+          type: "produce",
+          produceType: eventType
+        },
+        "*"
+      );
+    });
     window.addEventListener("message", this.onMessage);
-    // setTimeout(() => {
-    //   this.initLoading = true;
-    //   window.parent.postMessage(
-    //     {
-    //       type: "produce",
-    //       produceType: "orgData"
-    //     },
-    //     "*"
-    //   );
-    // }, 3000);
   },
   mounted() {
     window.parent.postMessage(
@@ -64,6 +63,7 @@ export default {
     );
   },
   beforeDestroy() {
+    this.$bus.$off("produce");
     window.removeEventListener("message", this.onMessage);
   },
   methods: {
@@ -72,7 +72,7 @@ export default {
         return;
       }
       if (data.type === "init") {
-        Log.prettyPrimary("收到初始化事件：", JSON.stringify(data.data));
+        // Log.prettyPrimary("收到初始化事件：", JSON.stringify(data.data));
         if (data.data.processKeyAndNameDisabled) {
           this.processKeyAndNameDisabled = true;
         }
@@ -89,6 +89,9 @@ export default {
             this.$nextTick(() => this.$refs.processDesigner.createNewDiagram());
           }
         }
+      } else {
+        // 派发给别的组件
+        this.$bus.$emit(data.type, data.data);
       }
     },
     initModeler(modeler) {
