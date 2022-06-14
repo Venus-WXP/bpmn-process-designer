@@ -15,15 +15,13 @@ module.exports = {
       entry: "src/designer/main.js",
       filename: "bpmn-process-designer.html",
       template: "public/index.html",
-      title: "流程设计器",
-      chunks: ["chunk-libs", "chunk-element-ui", "designer", "runtime"]
+      title: "流程设计器"
     },
     viewer: {
       entry: "src/viewer/main.js",
       filename: "bpmn-process-viewer.html",
       template: "public/index.html",
-      title: "流程查看器",
-      chunks: ["chunk-libs", "chunk-element-ui", "viewer", "runtime"]
+      title: "流程查看器"
     }
   },
   productionSourceMap: false,
@@ -33,34 +31,7 @@ module.exports = {
   chainWebpack: config => {
     config
       // https://webpack.js.org/configuration/devtool/#development
-      .when(process.env.NODE_ENV === "development", config => config.devtool("source-map"));
-
-    config.when(process.env.NODE_ENV !== "development", config => {
-      config.optimization.splitChunks({
-        chunks: "all",
-        cacheGroups: {
-          libs: {
-            name: "chunk-libs",
-            test: /[\\/]node_modules[\\/]/,
-            priority: 10,
-            chunks: "initial" // only bpmn-modeler third parties that are initially dependent
-          },
-          elementUI: {
-            name: "chunk-element-ui", // split elementUI into a single bpmn-modeler
-            priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
-            test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
-          }
-          // commons: {
-          //   name: "chunk-components",
-          //   test: resolve("package"), // can customize your rules
-          //   minChunks: 1, //  minimum common number
-          //   priority: 5,
-          //   reuseExistingChunk: true
-          // }
-        }
-      });
-      config.optimization.runtimeChunk("single");
-    });
+      .when(!IS_PROD, config => config.devtool("source-map"));
   },
   configureWebpack: config => {
     // 生产环境相关配置

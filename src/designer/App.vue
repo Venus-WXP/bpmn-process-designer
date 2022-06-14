@@ -11,7 +11,7 @@
       ref="processDesigner"
       @init-finished="initModeler"
     />
-    <properties-panel :bpmn-modeler="modeler" :process-key-and-name-disabled="processKeyAndNameDisabled" class="process-panel" />
+    <properties-panel :bpmn-modeler="modeler" :process-key-and-name-disabled="processKeyAndNameDisabled" :process-form="processForm" class="process-panel" />
   </div>
 </template>
 
@@ -39,7 +39,8 @@ export default {
         additionalModel: [CustomContentPadProvider, CustomPaletteProvider, TaskResizer, ColorPicker]
       },
       initLoading: false,
-      processKeyAndNameDisabled: false
+      processKeyAndNameDisabled: false,
+      processForm: null
     };
   },
   created() {
@@ -76,6 +77,7 @@ export default {
         if (data.data.processKeyAndNameDisabled) {
           this.processKeyAndNameDisabled = true;
         }
+        this.processForm = data.data.processForm;
         const xml = data.data.processDefinitionXml;
         if (xml) {
           this.$refs.processDesigner.createNewDiagram(xml);

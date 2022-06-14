@@ -88,6 +88,15 @@
     margin-bottom: 0;
     padding-bottom: 18px;
   }
+  .cell {
+    .el-checkbox__label {
+      padding-left: 4px;
+      font-size: 12px;
+    }
+    .el-checkbox {
+      margin-right: 8px;
+    }
+  }
 }
 .list-property {
   flex-direction: column;

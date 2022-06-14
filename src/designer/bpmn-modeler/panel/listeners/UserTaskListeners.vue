@@ -146,7 +146,7 @@
       </div>
     </el-drawer>
 
-    <!-- 注入西段 编辑/创建 部分 -->
+    <!-- 注入字段 编辑/创建 部分 -->
     <el-dialog title="字段配置" :visible.sync="listenerFieldFormModelVisible" width="600px" append-to-body destroy-on-close>
       <el-form :model="listenerFieldForm" label-width="96px" ref="listenerFieldFormRef" style="height: 136px" @submit.native.prevent>
         <el-form-item label="字段名称" prop="name" :rules="{ required: true, message: '请输入字段名称', trigger: ['blur', 'change'] }">
@@ -297,15 +297,17 @@ export default {
     // 保存监听器注入字段
     saveListenerField() {
       this.$refs["listenerFieldFormRef"].validate(valid => {
-        if (this.editingListenerFieldIndex === -1) {
-          this.fieldsListOfListener.push(this.listenerFieldForm);
-          this.listenerForm.fields.push(this.listenerFieldForm);
-        } else {
-          this.fieldsListOfListener.splice(this.editingListenerFieldIndex, 1, this.listenerFieldForm);
-          this.listenerForm.fields.splice(this.editingListenerFieldIndex, 1, this.listenerFieldForm);
+        if (valid) {
+          if (this.editingListenerFieldIndex === -1) {
+            this.fieldsListOfListener.push(this.listenerFieldForm);
+            this.listenerForm.fields.push(this.listenerFieldForm);
+          } else {
+            this.fieldsListOfListener.splice(this.editingListenerFieldIndex, 1, this.listenerFieldForm);
+            this.listenerForm.fields.splice(this.editingListenerFieldIndex, 1, this.listenerFieldForm);
+          }
+          this.listenerFieldFormModelVisible = false;
+          this.$nextTick(() => (this.listenerFieldForm = {}));
         }
-        this.listenerFieldFormModelVisible = false;
-        this.$nextTick(() => (this.listenerFieldForm = {}));
       });
     },
     // 移除监听器字段

@@ -2,41 +2,36 @@
   <div class="panel-tab__content">
     <el-form label-width="80px" @submit.native.prevent>
       <el-form-item label="表单标识">
-        <el-select v-model="formKey" clearable @change="updateElementFormKey">
+        <el-select v-model="formKey" clearable :disabled="!!formKey" @change="updateElementFormKey">
           <el-option v-for="item in formKeyList" :key="item.formKey" :value="item.formKey" :label="item.formTitle" />
         </el-select>
       </el-form-item>
-      <el-form-item label="业务标识">
-        <el-select v-model="businessKey" @change="updateElementBusinessKey">
-          <el-option v-for="i in fieldList" :key="i.id" :value="i.id" :label="i.label" />
-          <el-option label="无" value="" />
-        </el-select>
+      <el-form-item v-if="false" label="业务标识">
+        <el-input v-model="businessKey" :disabled="!!businessKey" />
       </el-form-item>
     </el-form>
 
     <!--字段列表-->
     <div class="element-property list-property">
       <el-divider><i class="el-icon-coin"></i> 表单字段</el-divider>
-      <el-table :data="fieldList" size="mini" max-height="240" border fit>
-        <el-table-column label="序号" type="index" width="50px" align="center" />
-        <el-table-column label="字段名称" prop="label" min-width="80px" show-overflow-tooltip />
-        <el-table-column label="字段类型" prop="type" min-width="80px" :formatter="row => fieldType[row.type] || row.type" show-overflow-tooltip />
-        <el-table-column label="默认值" prop="defaultValue" min-width="80px" show-overflow-tooltip />
-        <el-table-column label="操作" width="90px" align="center">
-          <template #default="{ row, $index }">
-            <el-button type="text" size="mini" @click="openFieldForm(row, $index)">编辑</el-button>
-            <el-divider direction="vertical" />
-            <el-button type="text" size="mini" style="color: #ff4d4f" @click="removeField(row, $index)">移除</el-button>
+      <el-table :data="formProperties" size="mini" max-height="480" border fit>
+        <el-table-column label="字段ID" prop="id" width="100px" show-overflow-tooltip />
+        <el-table-column label="字段名称" prop="name" min-width="100px" show-overflow-tooltip />
+        <el-table-column label="操作" width="180px" align="center">
+          <template #default="{ row }">
+            <el-checkbox v-model="row.writable" label="可写" @change="updateElementExtensions" />
+            <el-checkbox v-model="row.readable" label="可读" @change="updateElementExtensions" />
+            <el-checkbox v-model="row.required" label="必填" @change="updateElementExtensions" />
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <div class="element-drawer__button">
+    <div v-if="false" class="element-drawer__button">
       <el-button type="primary" icon="el-icon-plus" @click="openFieldForm(null, -1)">添加字段</el-button>
     </div>
 
     <!--字段配置侧边栏-->
-    <el-drawer :visible.sync="fieldModelVisible" title="字段配置" :size="`${width}px`" append-to-body destroy-on-close>
+    <el-drawer v-if="false" :visible.sync="fieldModelVisible" title="字段配置" :size="`${width}px`" append-to-body destroy-on-close>
       <el-form ref="fieldForm" :model="formFieldForm" :rules="validationRules" label-width="80px" @submit.native.prevent>
         <el-form-item label="字段ID" prop="id">
           <el-input v-model="formFieldForm.id" clearable />
@@ -49,7 +44,7 @@
         <el-form-item label="类型名称" prop="typeName" v-if="formFieldForm.type === 'custom'">
           <el-input v-model="formFieldForm.typeName" clearable />
         </el-form-item>
-        <el-form-item label="名称" prop="label">
+        <el-form-item label="名称" prop="name">
           <el-input v-model="formFieldForm.label" clearable />
         </el-form-item>
         <el-form-item label="时间格式" prop="datePattern" v-if="formFieldForm.type === 'date'">
@@ -126,7 +121,7 @@
       </div>
     </el-drawer>
 
-    <el-dialog :visible.sync="fieldOptionModelVisible" :title="optionModelTitle" width="600px" append-to-body destroy-on-close>
+    <el-dialog v-if="false" :visible.sync="fieldOptionModelVisible" :title="optionModelTitle" width="600px" append-to-body destroy-on-close>
       <el-form ref="optionForm" :model="fieldOptionForm" :rules="extraValidationRules" label-width="80px" @submit.native.prevent>
         <el-form-item label="编号/ID" prop="id" v-if="fieldOptionType !== 'constraint'" key="option-id">
           <el-input v-model="fieldOptionForm.id" clearable />
@@ -152,6 +147,7 @@
 <script>
 import { buildValidationRules } from "@/designer/bpmn-modeler/utils";
 
+const fieldOps = ["writable", "readable", "required"];
 export default {
   name: "ElementForm",
   props: {
@@ -160,7 +156,8 @@ export default {
   },
   inject: {
     prefix: "prefix",
-    width: "width"
+    width: "width",
+    pp: "pp"
   },
   data() {
     return {
@@ -179,6 +176,9 @@ export default {
         enum: "枚举类",
         custom: "自定义类型"
       },
+      formData: null,
+      formFieldMap: {},
+      formProperties: [],
       formFieldIndex: -1, // 编辑中的字段， -1 为新增
       formFieldOptionIndex: -1, // 编辑中的字段配置项， -1 为新增
       fieldModelVisible: false,
@@ -226,6 +226,20 @@ export default {
     }
   },
   methods: {
+    buildFormProperties() {
+      if (!this.pp.processForm || !this.pp.processForm.formConfig) {
+        return [];
+      }
+      const formConfig = JSON.parse(this.pp.processForm.formConfig);
+      return formConfig.fields
+        .filter(field => field.__vModel__)
+        .map(field => {
+          return {
+            id: field.__vModel__,
+            name: field.__config__.label
+          };
+        });
+    },
     resetFormList() {
       this.bpmnElement = window.bpmnInstances.bpmnElement;
       this.formKey = this.bpmnElement.businessObject.formKey;
@@ -233,29 +247,72 @@ export default {
       this.elExtensionElements =
         this.bpmnElement.businessObject.get("extensionElements") || window.bpmnInstances.moddle.create("bpmn:ExtensionElements", { values: [] });
       // 获取元素表单配置 或者 创建新的表单配置
-      this.formData =
-        this.elExtensionElements.values.filter(ex => ex.$type === `${this.prefix}:FormData`)?.[0] ||
-        window.bpmnInstances.moddle.create(`${this.prefix}:FormData`, { fields: [] });
-
-      // 业务标识 businessKey， 绑定在 formData 中
-      this.businessKey = this.formData.businessKey;
-
+      this.formFieldMap = (this.elExtensionElements.values.filter(ex => ex.$type === `${this.prefix}:FormProperty`) ?? []).reduce((o, n) => {
+        o[n.id] = n;
+        return o;
+      }, {});
+      this.formProperties = Object.keys(this.formFieldMap).map(id => {
+        return {
+          id,
+          name: this.formFieldMap[id].name,
+          writable: this.formFieldMap[id].writable,
+          readable: this.formFieldMap[id].readable,
+          required: this.formFieldMap[id].required
+        };
+      });
       // 保留剩余扩展元素，便于后面更新该元素对应属性
-      this.otherExtensions = this.elExtensionElements.values.filter(ex => ex.$type !== `${this.prefix}:FormData`);
+      this.otherExtensions = this.elExtensionElements.values.filter(ex => ex.$type !== `${this.prefix}:FormProperty`);
 
-      // 复制原始值，填充表格
-      this.fieldList = JSON.parse(JSON.stringify(this.formData.fields || []));
+      this.initFormProperties();
+    },
+    initFormProperties() {
+      this.formKey = this.pp.processForm.formKey;
+      if (this.formKey) {
+        this.updateElementFormKey();
+      }
 
-      // 更新元素扩展属性，避免后续报错
-      this.updateElementExtensions();
+      const formProperties = this.buildFormProperties();
+      if (!formProperties.length) {
+        return;
+      }
+
+      const propertyMap = formProperties.reduce((o, n) => {
+        o[n.id] = n;
+        return o;
+      }, {});
+
+      const notExisted = formProperties.filter(item => !this.formFieldMap[item.id]);
+      const needBeDeleted = Object.keys(this.formFieldMap).filter(id => !propertyMap[id]);
+      if (needBeDeleted.length) {
+        needBeDeleted.forEach(id => {
+          this.formProperties.splice(
+            this.formProperties.findIndex(item => item.id === id),
+            1
+          );
+          this.formFieldMap.delete(id);
+        });
+
+        this.updateElementExtensions();
+      }
+      if (notExisted.length) {
+        notExisted.forEach(item => {
+          const FormProperty = window.bpmnInstances.moddle.create(`${this.prefix}:FormProperty`, {
+            id: item.id,
+            name: item.name,
+            required: false,
+            writable: false,
+            readable: false
+          });
+
+          this.formProperties.push(FormProperty);
+          this.formFieldMap[item.id] = FormProperty;
+        });
+
+        this.updateElementExtensions();
+      }
     },
     updateElementFormKey() {
       window.bpmnInstances.modeling.updateProperties(this.bpmnElement, { formKey: this.formKey });
-    },
-    updateElementBusinessKey() {
-      window.bpmnInstances.modeling.updateModdleProperties(this.bpmnElement, this.formData, {
-        businessKey: this.businessKey
-      });
     },
     // 打开字段详情侧边栏
     openFieldForm(field, index) {
@@ -326,9 +383,9 @@ export default {
     saveField() {
       this.$refs.fieldForm.validate(valid => {
         if (valid) {
-          const { id, type, label, defaultValue, datePattern } = this.formFieldForm;
-          const Field = window.bpmnInstances.moddle.create(`${this.prefix}:FormField`, { id, type, label });
+          const { id, type, name, defaultValue, datePattern } = this.formFieldForm;
           defaultValue && (Field.defaultValue = defaultValue);
+          const Field = window.bpmnInstances.moddle.create(`${this.prefix}:FormField`, { id, type, name });
           datePattern && (Field.datePattern = datePattern);
           // 构建属性
           if (this.fieldPropertiesList && this.fieldPropertiesList.length) {
@@ -405,7 +462,17 @@ export default {
     updateElementExtensions() {
       // 更新回扩展元素
       const newElExtensionElements = window.bpmnInstances.moddle.create(`bpmn:ExtensionElements`, {
-        values: this.otherExtensions.concat(this.formData)
+        values: this.otherExtensions.concat(
+          this.formProperties.map(property => {
+            return window.bpmnInstances.moddle.create(`${this.prefix}:FormProperty`, {
+              id: property.id,
+              name: property.name,
+              required: property.required,
+              writable: property.writable,
+              readable: property.readable
+            });
+          })
+        )
       });
       // 更新到元素上
       window.bpmnInstances.modeling.updateProperties(this.bpmnElement, {

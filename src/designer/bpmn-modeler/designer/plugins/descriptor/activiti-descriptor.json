@@ -982,7 +982,7 @@
       "properties": [
         {
           "name": "fields",
-          "type": "FormField",
+          "type": "FormProperty",
           "isMany": true
         },
         {
@@ -1002,7 +1002,7 @@
           "isAttr": true
         },
         {
-          "name": "label",
+          "name": "name",
           "type": "String",
           "isAttr": true
         },
@@ -1012,12 +1012,37 @@
           "isAttr": true
         },
         {
+          "name": "variable",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "expression",
+          "type": "String",
+          "isAttr": true
+        },
+        {
           "name": "datePattern",
           "type": "String",
           "isAttr": true
         },
         {
-          "name": "defaultValue",
+          "name": "default",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "required",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "readable",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "writable",
           "type": "String",
           "isAttr": true
         },

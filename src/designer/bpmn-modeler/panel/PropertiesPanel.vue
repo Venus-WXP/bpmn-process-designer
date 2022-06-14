@@ -79,12 +79,17 @@ export default {
     processKeyAndNameDisabled: {
       type: Boolean,
       default: false
+    },
+    processForm: {
+      type: Object,
+      required: false
     }
   },
   provide() {
     return {
       prefix: this.prefix,
-      width: this.width
+      width: this.width,
+      pp: this
     };
   },
   data() {

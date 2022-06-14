@@ -14,10 +14,11 @@
 import UserTask from "./task-components/UserTask";
 import ScriptTask from "./task-components/ScriptTask";
 import ReceiveTask from "./task-components/ReceiveTask";
+import ServiceTask from "./task-components/ServiceTask";
 
 export default {
   name: "ElementTaskConfig",
-  components: { UserTask, ScriptTask, ReceiveTask },
+  components: { UserTask, ScriptTask, ReceiveTask, ServiceTask },
   props: {
     id: String,
     type: String
@@ -35,7 +36,8 @@ export default {
         // 发送任务、服务任务、业务规则任务共用一个相同配置
         UserTask: "UserTask", // 用户任务配置
         ScriptTask: "ScriptTask", // 脚本任务配置
-        ReceiveTask: "ReceiveTask" // 消息接收任务
+        ReceiveTask: "ReceiveTask", // 消息接收任务
+        ServiceTask: "ServiceTask"
       }
     };
   },
