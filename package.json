@@ -25,6 +25,7 @@
     "bpmn-js": "^9.2.2",
     "bpmn-js-color-picker": "^0.4.0",
     "bpmn-js-task-resize": "^1.2.0",
+    "clipboard-polyfill": "^3.0.3",
     "core-js": "^3.22.5",
     "diagram-js": "^8.3.0",
     "element-ui": "^2.15.8",

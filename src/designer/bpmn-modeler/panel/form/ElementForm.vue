@@ -15,7 +15,11 @@
     <div class="element-property list-property">
       <el-divider><i class="el-icon-coin"></i> 表单字段</el-divider>
       <el-table :data="formProperties" size="mini" max-height="480" border fit>
-        <el-table-column label="字段ID" prop="id" width="100px" show-overflow-tooltip />
+        <el-table-column label="ID（双击复制）" min-width="100px" show-overflow-tooltip>
+          <template #default="{ row }">
+            <span @dblclick="handleCopy(row)">{{ row.id }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="字段名称" prop="name" min-width="100px" show-overflow-tooltip />
         <el-table-column label="操作" width="180px" align="center">
           <template #default="{ row }">
@@ -145,9 +149,9 @@
 </template>
 
 <script>
+import * as clipboard from "clipboard-polyfill/text";
 import { buildValidationRules } from "@/designer/bpmn-modeler/utils";
 
-const fieldOps = ["writable", "readable", "required"];
 export default {
   name: "ElementForm",
   props: {
@@ -232,6 +236,26 @@ export default {
       }
       const formConfig = JSON.parse(this.pp.processForm.formConfig);
       return formConfig.fields
+        .flatMap(field => {
+          if (field.__vModel__) {
+            return [field];
+          } else if (Array.isArray(field.children)) {
+            return field.children;
+          } else if (Array.isArray(field.tr)) {
+            return field.tr.flatMap(item => {
+              if (Array.isArray(item.td)) {
+                return item.td.flatMap(t => {
+                  if (Array.isArray(t.children)) {
+                    return t.children;
+                  }
+                  return [];
+                });
+              }
+              return [];
+            });
+          }
+          return [];
+        })
         .filter(field => field.__vModel__)
         .map(field => {
           return {
@@ -239,6 +263,10 @@ export default {
             name: field.__config__.label
           };
         });
+    },
+    async handleCopy(row) {
+      await clipboard.writeText(row.id)
+      this.$message.success(`表单字段[${row.name}]的ID[${row.id}]已成功复制到剪贴板！`);
     },
     resetFormList() {
       this.bpmnElement = window.bpmnInstances.bpmnElement;
