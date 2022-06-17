@@ -1,4 +1,4 @@
-export default (key, name) => {
+export default (key, name, description) => {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn2:definitions 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -9,6 +9,7 @@ export default (key, name) => {
   id="diagram_${key}"
   targetNamespace="http://activiti.org/bpmn">
   <bpmn2:process id="${key}" name="${name}" isExecutable="true">
+    <bpmn2:documentation>${description || ""}</bpmn2:documentation>
   </bpmn2:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="${key}">

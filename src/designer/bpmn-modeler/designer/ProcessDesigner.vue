@@ -75,6 +75,7 @@ export default {
     value: String, // xml 字符串
     processId: String,
     processName: String,
+    processDescription: String,
     options: {
       type: Object,
       default: () => ({})
@@ -195,8 +196,9 @@ export default {
       // 将字符串转换成图显示出来
       const newId = this.processId || `Process_${new Date().getTime()}`;
       const newName = this.processName || `业务流程_${new Date().getTime()}`;
+      const newDescription = this.processDescription || "新流程";
       this.currentProcessName = newName;
-      const xmlString = xml || defaultEmptyXML(newId, newName);
+      const xmlString = xml || defaultEmptyXML(newId, newName, newDescription);
       try {
         const { warnings } = await this.bpmnModeler.importXML(xmlString);
         if (warnings && warnings.length) {

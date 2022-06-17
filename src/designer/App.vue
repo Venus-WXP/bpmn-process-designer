@@ -35,6 +35,7 @@ export default {
       controlForm: {
         processId: "",
         processName: "",
+        processDescription: "",
         events: ["element.click", "element.contextmenu"],
         additionalModel: [CustomContentPadProvider, CustomPaletteProvider, TaskResizer, ColorPicker]
       },
@@ -88,6 +89,7 @@ export default {
           if (processId && processName) {
             this.controlForm.processId = processId;
             this.controlForm.processName = processName;
+            this.controlForm.processDescription = data.data.processDescription
             this.$nextTick(() => this.$refs.processDesigner.createNewDiagram());
           }
         }
