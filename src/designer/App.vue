@@ -59,7 +59,7 @@ export default {
   mounted() {
     window.parent.postMessage(
       {
-        type: "initialized"
+        type: "bpmnDesignerInitialized"
       },
       "*"
     );

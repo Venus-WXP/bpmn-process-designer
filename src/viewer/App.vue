@@ -36,7 +36,8 @@ export default {
     return {
       hasImported: false,
       loadingInstance: null,
-      loadingTimer: null
+      loadingTimer: null,
+      currentRenderConfig: null
     };
   },
   created() {
@@ -62,7 +63,7 @@ export default {
     });
     window.parent.postMessage(
       {
-        type: "initialized"
+        type: "bpmnViewerInitialized"
       },
       "*"
     );
@@ -78,8 +79,11 @@ export default {
       }
       if (data.type === "render") {
         if (data.data.processDefinitionXml) {
-          this.importXml(data.data);
+          this.currentRenderConfig = data.data
+          this.importXml(this.currentRenderConfig);
         }
+      } else if (data.type === "reRender") {
+        this.reRender();
       }
     },
     async importXml(toRenderConfig) {
@@ -127,6 +131,9 @@ export default {
           modeling.setColor(elem, colorConfig[activity.status]);
         }
       });
+    },
+    reRender() {
+      this.importXml(this.currentRenderConfig);
     }
   }
 };
