@@ -151,7 +151,7 @@
 <script>
 import * as clipboard from "clipboard-polyfill/text";
 import { buildValidationRules } from "@/designer/bpmn-modeler/utils";
-
+let formKeys = null;
 export default {
   name: "ElementForm",
   props: {
@@ -166,7 +166,6 @@ export default {
   data() {
     return {
       formKey: "",
-      formKeyLoaded: false,
       formKeyList: [],
       businessKey: "",
       optionModelTitle: "",
@@ -221,10 +220,12 @@ export default {
     }
   },
   created() {
-    if (!this.formKeyLoaded) {
+    if (formKeys) {
+      this.formKeyList = [...formKeys];
+    } else {
       this.$bus.$once("formKeyData", data => {
+        formKeys = [...data];
         this.formKeyList = data;
-        this.formKeyLoaded = true;
       });
       this.$bus.$emit("produce", "formKeyData");
     }
@@ -265,7 +266,7 @@ export default {
         });
     },
     async handleCopy(row) {
-      await clipboard.writeText(row.id)
+      await clipboard.writeText(`formData.${row.id}`);
       this.$message.success(`表单字段[${row.name}]的ID[${row.id}]已成功复制到剪贴板！`);
     },
     resetFormList() {
@@ -280,12 +281,13 @@ export default {
         return o;
       }, {});
       this.formProperties = Object.keys(this.formFieldMap).map(id => {
+        const field = this.formFieldMap[id];
         return {
           id,
-          name: this.formFieldMap[id].name,
-          writable: this.formFieldMap[id].writable,
-          readable: this.formFieldMap[id].readable,
-          required: this.formFieldMap[id].required
+          name: field.name,
+          writable: field.writable === true || field.writable === "true",
+          readable: field.readable === true || field.readable === "true",
+          required: field.required === true || field.required === "true"
         };
       });
       // 保留剩余扩展元素，便于后面更新该元素对应属性

@@ -67,7 +67,6 @@ import translationsCN from "./plugins/translate/zh";
 import activitiModdleDescriptor from "./plugins/descriptor/activiti-descriptor.json";
 // 标签解析 Extension
 import activitiModdleExtension from "./plugins/extension-moddle/activiti";
-import { debounce } from "min-dash";
 
 export default {
   name: "ProcessDesigner",
@@ -168,22 +167,19 @@ export default {
         });
       });
       // 监听图形改变返回xml
-      EventBus.on(
-        "commandStack.changed",
-        debounce(async event => {
-          try {
-            this.recoverable = this.bpmnModeler.get("commandStack").canRedo();
-            this.revocable = this.bpmnModeler.get("commandStack").canUndo();
-            this.currentProcessName = this.bpmnModeler.get("canvas").getRootElement().businessObject.name;
-            const { xml } = await this.bpmnModeler.saveXML({ format: true });
-            this.$emit("commandStack-changed", event);
-            this.$emit("input", xml);
-            this.$emit("change", xml);
-          } catch (e) {
-            console.error(`获取流程定义XML内容出现错误：${e.message || e}`);
-          }
-        }, 500)
-      );
+      EventBus.on("commandStack.changed", async event => {
+        try {
+          this.recoverable = this.bpmnModeler.get("commandStack").canRedo();
+          this.revocable = this.bpmnModeler.get("commandStack").canUndo();
+          this.currentProcessName = this.bpmnModeler.get("canvas").getRootElement().businessObject.name;
+          const { xml } = await this.bpmnModeler.saveXML({ format: true });
+          this.$emit("commandStack-changed", event);
+          this.$emit("input", xml);
+          this.$emit("change", xml);
+        } catch (e) {
+          console.error(`获取流程定义XML内容出现错误：${e.message || e}`);
+        }
+      });
       // 监听视图缩放变化
       this.bpmnModeler.on("canvas.viewbox.changed", ({ viewbox }) => {
         this.$emit("canvas-viewbox-changed", { viewbox });

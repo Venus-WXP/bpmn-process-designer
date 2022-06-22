@@ -1,5 +1,10 @@
 <template>
   <div style="margin-top: 16px">
+    <el-form-item label="任务类型">
+      <el-select v-model="userTaskForm.category" filterable clearable @change="updateElementTask('category')">
+        <el-option v-for="category in categories" :key="category.id" :label="category.name" :value="category.id" />
+      </el-select>
+    </el-form-item>
     <el-form-item label="处理用户">
       <el-select v-model="userTaskForm.assignee" filterable clearable @change="updateElementTask('assignee')">
         <el-option v-for="user in users" :key="user.id" :label="user.name" :value="user.id" />
@@ -36,6 +41,8 @@
 </template>
 
 <script>
+let principalsData = null;
+
 export default {
   name: "UserTask",
   props: {
@@ -45,6 +52,7 @@ export default {
   data() {
     return {
       defaultTaskForm: {
+        category: "GLOBAL",
         assignee: "",
         candidateUsers: [],
         candidateGroups: [],
@@ -53,9 +61,18 @@ export default {
         priority: ""
       },
       userTaskForm: {},
+      categories: [
+        {
+          id: "GLOBAL",
+          name: "全局任务"
+        },
+        {
+          id: "DEPARTMENT",
+          name: "部门任务"
+        }
+      ],
       users: [],
-      groups: [],
-      principalsLoaded: false
+      groups: []
     };
   },
   watch: {
@@ -68,11 +85,15 @@ export default {
     }
   },
   created() {
-    if (!this.principalsLoaded) {
+    if (principalsData) {
+      const copy = { ...principalsData };
+      this.users = copy.users;
+      this.groups = copy.groups;
+    } else {
       this.$bus.$once("principalsData", data => {
+        principalsData = { ...data };
         this.users = data.users;
         this.groups = data.groups;
-        this.principalsLoaded = true;
       });
       this.$bus.$emit("produce", "principalsData");
     }
@@ -87,6 +108,9 @@ export default {
           value = this.bpmnElement?.businessObject[key] || this.defaultTaskForm[key];
         }
         this.$set(this.userTaskForm, key, value);
+      }
+      if (!this.bpmnElement?.businessObject["category"]) {
+        this.updateElementTask("category");
       }
     },
     updateElementTask(key) {
